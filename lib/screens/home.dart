@@ -1,5 +1,8 @@
+import 'dart:math';
+
 import 'package:fake_story/screens/allCategories.dart';
 import 'package:fake_story/screens/category.dart';
+import 'package:fake_story/screens/profile.dart';
 import 'package:fake_story/screens/search_page.dart';
 import 'package:fake_story/utils/app_constans.dart';
 import 'package:fake_story/widgets/grid_gallery.dart';
@@ -47,23 +50,7 @@ class _MyHomePageState extends State<MyHomePage>
           elevation: 0,
           iconTheme: const IconThemeData(color: Color(0xff222222)),
           actions: [
-            const SizedBox(width: 10),
-            Theme(
-              data: ThemeData(
-                highlightColor: Colors.transparent,
-                splashColor: Colors.transparent,
-              ),
-              child: IconButton(
-                iconSize: 42,
-                onPressed: () {},
-                icon: ClipRRect(
-                  borderRadius: BorderRadius.circular(50),
-                  child: Image.network('https://picsum.photos/850',
-                      fit: BoxFit.cover),
-                ),
-              ),
-            ),
-            const Spacer(),
+            const SizedBox(width: 20),
             Theme(
               data: ThemeData(
                 highlightColor: Colors.transparent,
@@ -85,6 +72,76 @@ class _MyHomePageState extends State<MyHomePage>
                         ),
                       ),
                     ),
+                  ],
+                ),
+              ),
+            ),
+            const Spacer(),
+            PreferredSize(
+              preferredSize: const Size.fromHeight(40),
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 15, vertical: 0),
+                child: Theme(
+                  //delete hover effect
+                  data: ThemeData(
+                    highlightColor: Colors.transparent,
+                    splashColor: Colors.transparent,
+                  ),
+
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 5),
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(100),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 5, horizontal: 10),
+                        child: TabBar(
+                          controller: _tabController,
+                          indicator: BoxDecoration(
+                            borderRadius: BorderRadius.circular(100),
+                            color: Color(0xfff0dff3),
+                          ),
+                          labelPadding: const EdgeInsets.symmetric(
+                              horizontal: 15, vertical: 0),
+                          padding: const EdgeInsets.all(0),
+                          indicatorPadding: const EdgeInsets.symmetric(
+                              horizontal: 0, vertical: 4),
+                          labelColor: Colors.black,
+                          labelStyle: const TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w600),
+                          unselectedLabelColor: Colors.grey,
+                          unselectedLabelStyle: const TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w400),
+                          isScrollable: true,
+                          tabs: <Widget>[
+                            Tab(
+                              text: "Videos",
+                            ),
+                            Tab(
+                              text: "Photos",
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const Spacer(),
+            Theme(
+              data: ThemeData(
+                highlightColor: Colors.transparent,
+                splashColor: Colors.transparent,
+              ),
+              child: Center(
+                child: Wrap(
+                  children: [
                     const SizedBox(width: 10),
                     Container(
                       decoration: BoxDecoration(
@@ -110,52 +167,6 @@ class _MyHomePageState extends State<MyHomePage>
             ),
             const SizedBox(width: 20),
           ],
-          bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(40),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 0),
-              child: Theme(
-                //delete hover effect
-                data: ThemeData(
-                  highlightColor: Colors.transparent,
-                  splashColor: Colors.transparent,
-                ),
-
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: TabBar(
-                    labelPadding:
-                        const EdgeInsets.symmetric(horizontal: 5, vertical: 0),
-                    controller: _tabController,
-                    indicatorWeight: 0,
-                    indicator: UnderlineTabIndicator(
-                      borderSide: BorderSide(
-                          width: 3.0,
-                          color: Theme.of(context).colorScheme.secondary),
-                      insets: const EdgeInsets.symmetric(
-                        horizontal: 20.0,
-                      ),
-                    ),
-                    labelColor: Colors.black,
-                    labelStyle: const TextStyle(
-                        fontSize: 22, fontWeight: FontWeight.w500),
-                    unselectedLabelColor: Color(0xff4e4e4e),
-                    unselectedLabelStyle: const TextStyle(
-                        fontSize: 20, fontWeight: FontWeight.w300),
-                    isScrollable: true,
-                    tabs: <Widget>[
-                      Tab(
-                        text: "Videos",
-                      ),
-                      Tab(
-                        text: "Photos",
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
         ),
         body: TabBarView(
           controller: _tabController,
@@ -181,7 +192,7 @@ class _HomeVideosViewState extends State<HomeVideosView>
           videoCategoryTop(category),
           const SizedBox(height: 10),
           AspectRatio(
-            aspectRatio: 1,
+            aspectRatio: 1.2,
             child: SizedBox(
               width: double.infinity,
               child: ListView.separated(
@@ -230,18 +241,7 @@ class _HomeVideosViewState extends State<HomeVideosView>
                   builder: (_) => CategoryPage(category: category),
                 ));
           },
-          child: Row(
-            children: [
-              Text(
-                "See all",
-                style: TextStyle(color: Constants.themeColor),
-              ),
-              const Icon(
-                Icons.keyboard_arrow_right_rounded,
-                color: Constants.themeColor,
-              )
-            ],
-          ),
+          child: viewAll(),
         )
       ],
     );
@@ -268,16 +268,27 @@ class _HomeVideosViewState extends State<HomeVideosView>
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: const SizedBox(
-                width: 62,
-                height: 62,
-              ),
-            ),
+            all
+                ? Container(
+                    width: 62,
+                    height: 62,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(100),
+                    ),
+                    child: const Icon(Icons.category),
+                  )
+                : SizedBox(
+                    width: 62,
+                    height: 62,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(100),
+                      child: Image.network(
+                        'https://picsum.photos/200',
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
             const SizedBox(height: 10),
             Text(
               category,
@@ -300,7 +311,6 @@ class _HomeVideosViewState extends State<HomeVideosView>
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            const SizedBox(height: 5),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -404,18 +414,7 @@ class _HomePhotosViewState extends State<HomePhotosView>
                   builder: (_) => CategoryPage(category: category),
                 ));
           },
-          child: Row(
-            children: [
-              Text(
-                "See all",
-                style: TextStyle(color: Constants.themeColor),
-              ),
-              const Icon(
-                Icons.keyboard_arrow_right_rounded,
-                color: Constants.themeColor,
-              )
-            ],
-          ),
+          child: viewAll(),
         )
       ],
     );
@@ -534,4 +533,19 @@ class _HomePhotosViewState extends State<HomePhotosView>
 
   @override
   bool get wantKeepAlive => true;
+}
+
+Row viewAll() {
+  return Row(
+    children: [
+      Text(
+        "View all",
+        style: TextStyle(color: Color(0xffb6b4b4), fontWeight: FontWeight.w500),
+      ),
+      const Icon(
+        Icons.keyboard_arrow_right_rounded,
+        color: Color(0xffb6b4b4),
+      )
+    ],
+  );
 }

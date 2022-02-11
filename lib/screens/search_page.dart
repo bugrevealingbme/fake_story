@@ -28,10 +28,11 @@ class _SearchPageState extends State<SearchPage>
     return Scaffold(
       backgroundColor: Constants.primaryColor,
       appBar: AppBar(
-        toolbarHeight: 70,
+        toolbarHeight: 30,
         backgroundColor: const Color(0xffF2F4F5),
         elevation: 0,
         iconTheme: const IconThemeData(color: Color(0xff222222)),
+        leading: Container(),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -39,29 +40,46 @@ class _SearchPageState extends State<SearchPage>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              TextFormField(
-                decoration: InputDecoration(
-                  hintText: "Search",
-                  hintStyle:
-                      const TextStyle(color: Color(0xff8f8f8f), fontSize: 17),
-                  contentPadding: const EdgeInsets.symmetric(vertical: 0.0),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20.0),
-                    borderSide: BorderSide.none,
+              Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      decoration: InputDecoration(
+                        hintText: "Search",
+                        hintStyle: const TextStyle(
+                            color: Color(0xff8f8f8f), fontSize: 17),
+                        contentPadding:
+                            const EdgeInsets.symmetric(vertical: 0.0),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                          borderSide: BorderSide.none,
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              width: 2,
+                              color: Theme.of(context).colorScheme.primary),
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                        filled: true,
+                        fillColor: Theme.of(context).cardColor,
+                        prefixIcon: const Icon(
+                          Icons.search,
+                          color: Color(0xff8f8f8f),
+                        ),
+                      ),
+                      onChanged: (val) {},
+                    ),
                   ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                        width: 2, color: Theme.of(context).colorScheme.primary),
-                    borderRadius: BorderRadius.circular(20.0),
-                  ),
-                  filled: true,
-                  fillColor: Theme.of(context).cardColor,
-                  prefixIcon: const Icon(
-                    Icons.search,
-                    color: Color(0xff8f8f8f),
-                  ),
-                ),
-                onChanged: (val) {},
+                  const SizedBox(width: 10),
+                  TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text(
+                        "Cancel",
+                        style: TextStyle(fontSize: 16),
+                      )),
+                ],
               ),
               const SizedBox(height: 30),
               GeneralWidgets.crtLabel('Categories'),
@@ -79,73 +97,60 @@ class _SearchPageState extends State<SearchPage>
                 ),
               ),
               const SizedBox(height: 30),
-              Stack(
-                alignment: Alignment.bottomCenter,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Container(
-                    decoration: BoxDecoration(
-                        border: Border(
-                      bottom: BorderSide(color: Colors.grey.shade200, width: 3),
-                    )),
+                  Theme(
+                    data: ThemeData(
+                      highlightColor: Colors.transparent,
+                      splashColor: Colors.transparent,
+                    ),
+                    child: TabBar(
+                      controller: _tabController,
+                      indicator: BoxDecoration(
+                        borderRadius: BorderRadius.circular(100),
+                        color: Color(0xfff0dff3),
+                      ),
+                      labelPadding: const EdgeInsets.symmetric(
+                          horizontal: 15, vertical: 0),
+                      padding: const EdgeInsets.all(0),
+                      indicatorPadding: const EdgeInsets.symmetric(
+                          horizontal: 0, vertical: 4),
+                      labelColor: Colors.black,
+                      labelStyle: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.w500),
+                      unselectedLabelColor:
+                          const Color.fromARGB(255, 139, 139, 139),
+                      unselectedLabelStyle: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.w500),
+                      isScrollable: true,
+                      tabs: <Widget>[
+                        Tab(
+                          text: "All",
+                        ),
+                        Tab(
+                          text: "Videos",
+                        ),
+                        Tab(
+                          text: "Photos",
+                        ),
+                      ],
+                    ),
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Theme(
-                        data: ThemeData(
-                          highlightColor: Colors.transparent,
-                          splashColor: Colors.transparent,
-                        ),
-                        child: TabBar(
-                          labelPadding: const EdgeInsets.only(right: 10),
-                          controller: _tabController,
-                          indicatorWeight: 0,
-                          indicator: UnderlineTabIndicator(
-                            borderSide: BorderSide(
-                              width: 3.0,
-                              color: Theme.of(context).colorScheme.secondary,
-                            ),
-                            insets: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                            ),
-                          ),
-                          labelColor: Colors.black,
-                          labelStyle: const TextStyle(
-                              fontSize: 17, fontWeight: FontWeight.w500),
-                          unselectedLabelColor:
-                              const Color.fromARGB(255, 139, 139, 139),
-                          unselectedLabelStyle: const TextStyle(
-                              fontSize: 17, fontWeight: FontWeight.w500),
-                          isScrollable: true,
-                          tabs: <Widget>[
-                            Tab(
-                              text: "All",
-                            ),
-                            Tab(
-                              text: "Videos",
-                            ),
-                            Tab(
-                              text: "Photos",
-                            ),
-                          ],
-                        ),
-                      ),
-                      const Spacer(),
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            viewer = viewer ? false : true;
-                          });
-                        },
-                        child: viewer
-                            ? const Icon(Icons.calendar_view_day_rounded)
-                            : const Icon(Icons.calendar_view_day),
-                      ),
-                    ],
+                  const Spacer(),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        viewer = viewer ? false : true;
+                      });
+                    },
+                    child: viewer
+                        ? const Icon(Icons.calendar_view_day_rounded)
+                        : const Icon(Icons.calendar_view_day),
                   ),
                 ],
               ),
-              const SizedBox(height: 30),
+              const SizedBox(height: 15),
               GridView.count(
                 crossAxisCount: viewer ? 2 : 3,
                 childAspectRatio: 0.571,

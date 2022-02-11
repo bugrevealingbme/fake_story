@@ -18,7 +18,8 @@ class GridGallery extends StatefulWidget {
   _GridGalleryState createState() => _GridGalleryState();
 }
 
-class _GridGalleryState extends State<GridGallery> {
+class _GridGalleryState extends State<GridGallery>
+    with SingleTickerProviderStateMixin {
   final List<Widget> _mediaList = [];
   int currentPage = 0;
   int? lastPage;
@@ -26,6 +27,7 @@ class _GridGalleryState extends State<GridGallery> {
   @override
   void initState() {
     super.initState();
+
     _fetchNewMedia();
   }
 
@@ -157,23 +159,65 @@ Future<void> gallerySheet(BuildContext context) {
               height: 20,
             ),
             SizedBox(
-              width: 70,
-              height: 5,
+              width: 50,
+              height: 4,
               child: Container(
                 decoration: BoxDecoration(
                     color: const Color(0xffcccccc),
                     borderRadius: BorderRadius.circular(50)),
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 20),
             Expanded(
               child: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Center(
-                      widthFactor: double.infinity,
-                      child: OutlinedButton(
+                    Row(
+                      children: [
+                        IconButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          icon: Icon(Icons.close),
+                        ),
+                        const Spacer(),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: const Color(0xfff2f4f5),
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 5, horizontal: 10),
+                          child: DefaultTabController(
+                            length: 2,
+                            child: TabBar(
+                              indicator: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15),
+                                color: Colors.white,
+                              ),
+                              labelPadding: const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 0),
+                              labelColor: Colors.black,
+                              labelStyle: const TextStyle(
+                                  fontSize: 14, fontWeight: FontWeight.w500),
+                              unselectedLabelColor: Colors.grey,
+                              unselectedLabelStyle: const TextStyle(
+                                  fontSize: 14, fontWeight: FontWeight.w300),
+                              isScrollable: true,
+                              tabs: const [
+                                Tab(
+                                  text: "Photos",
+                                ),
+                                Tab(
+                                  text: "Albums",
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const Spacer(),
+                        IconButton(
                           onPressed: () async {
                             final picked = await ImagePicker()
                                 .pickImage(source: ImageSource.gallery);
@@ -183,16 +227,18 @@ Future<void> gallerySheet(BuildContext context) {
                             final image = File(picked.path);
 
                             /*  setState(() {
-                                pickedimage = image;
-                                gsecildi = true;
-                                Navigator.of(context).pop();
-                              }); */
+                                  pickedimage = image;
+                                  gsecildi = true;
+                                  Navigator.of(context).pop();
+                                }); */
                           },
-                          child: Text("Choose from Gallery")),
+                          icon: const Icon(Icons.more_vert),
+                        ),
+                      ],
                     ),
                     Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: GeneralWidgets.crtLabel("RECENT"),
+                      padding: const EdgeInsets.all(15),
+                      child: GeneralWidgets.srtLabel("Recent"),
                     ),
                     GridGallery(),
                   ],

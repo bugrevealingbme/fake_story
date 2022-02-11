@@ -384,9 +384,17 @@ class GeneralWidgets {
     );
   }
 
+  static srtLabel(text) {
+    return Text(
+      text,
+      style: const TextStyle(
+          fontSize: 15, fontWeight: FontWeight.w500, color: Color(0xff222222)),
+    );
+  }
+
   static storyVideo(Size size, viewer, {bool showCategory = true}) {
     return SizedBox(
-      width: (size.width / 2) - 20,
+      width: (size.width / 2.5),
       child: Stack(
         children: [
           Positioned(
@@ -468,18 +476,7 @@ class GeneralWidgets {
                   ),
 
                   /// tags
-                  viewer
-                      ? Positioned(
-                          left: 15,
-                          bottom: 15,
-                          child: Row(
-                            children: [
-                              videoHastag(),
-                              videoHastag(),
-                            ],
-                          ),
-                        )
-                      : Container(),
+                  viewer ? videoBottomInfo() : Container(),
                 ],
               ),
             ),
@@ -547,24 +544,38 @@ class GeneralWidgets {
     );
   }
 
-  static videoHastag() {
-    return Container(
-      margin: const EdgeInsets.only(right: 10),
-      child: InkWell(
-        onTap: () async {},
-        child: Row(
-          children: [
-            Text(
-              '#',
-              style:
-                  TextStyle(fontSize: 17, color: Colors.white.withOpacity(0.5)),
-            ),
-            Text(
-              'Audi',
-              style: TextStyle(fontSize: 15, color: Colors.white),
-            ),
-          ],
-        ),
+  static videoBottomInfo() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: Column(
+        children: [
+          const Spacer(),
+          Row(
+            children: [
+              Text(
+                '1d ago',
+                style: TextStyle(fontSize: 15, color: Colors.white54),
+              ),
+              const Spacer(),
+              SizedBox(width: 10),
+              Row(
+                children: [
+                  const Icon(
+                    Icons.favorite_border_outlined,
+                    size: 18,
+                    color: Colors.white38,
+                  ),
+                  const SizedBox(width: 3),
+                  Text(
+                    '1.3K',
+                    style: TextStyle(fontSize: 14, color: Colors.white54),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+        ],
       ),
     );
   }

@@ -38,9 +38,9 @@ class _ProfilePageState extends State<ProfilePage>
           Center(
             child: Wrap(
               children: [
-                IconButton(
-                  onPressed: () {},
-                  icon: const Icon(
+                GestureDetector(
+                  onTap: () {},
+                  child: const Icon(
                     Icons.settings,
                     color: Colors.black,
                     size: 22,
@@ -98,50 +98,67 @@ class _ProfilePageState extends State<ProfilePage>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           Text(
                             "41",
                             style: const TextStyle(
                                 fontSize: 17, fontWeight: FontWeight.bold),
                           ),
+                          const SizedBox(width: 3),
                           Text(
                             "Stories",
-                            style: const TextStyle(
-                                fontSize: 15, fontWeight: FontWeight.w400),
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.grey.shade600,
+                            ),
                           ),
                         ],
                       ),
                       const SizedBox(width: 20),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           Text(
                             "129",
                             style: const TextStyle(
-                                fontSize: 17, fontWeight: FontWeight.bold),
+                              fontSize: 17,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
+                          const SizedBox(width: 3),
                           Text(
                             "Followers",
-                            style: const TextStyle(
-                                fontSize: 15, fontWeight: FontWeight.w400),
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.grey.shade600,
+                            ),
                           ),
                         ],
                       ),
                       const SizedBox(width: 20),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           Text(
                             "31",
                             style: const TextStyle(
                                 fontSize: 17, fontWeight: FontWeight.bold),
                           ),
+                          const SizedBox(width: 3),
                           Text(
                             "Following",
-                            style: const TextStyle(
-                                fontSize: 15, fontWeight: FontWeight.w400),
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.grey.shade600,
+                            ),
                           ),
                         ],
                       ),
@@ -213,70 +230,56 @@ class _ProfilePageState extends State<ProfilePage>
                 ],
               ),
               const SizedBox(height: 10),
-              const Divider(),
-              Stack(
-                alignment: Alignment.bottomCenter,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Container(
-                    decoration: BoxDecoration(
-                        border: Border(
-                      bottom: BorderSide(color: Colors.grey.shade200, width: 3),
-                    )),
+                  Theme(
+                    data: ThemeData(
+                      highlightColor: Colors.transparent,
+                      splashColor: Colors.transparent,
+                    ),
+                    child: TabBar(
+                      controller: _tabController,
+                      indicator: BoxDecoration(
+                        borderRadius: BorderRadius.circular(100),
+                        color: Color(0xfff0dff3),
+                      ),
+                      labelPadding: const EdgeInsets.symmetric(
+                          horizontal: 15, vertical: 0),
+                      padding: const EdgeInsets.all(0),
+                      indicatorPadding: const EdgeInsets.symmetric(
+                          horizontal: 0, vertical: 4),
+                      labelColor: Colors.black,
+                      labelStyle: const TextStyle(
+                          fontSize: 15, fontWeight: FontWeight.w500),
+                      unselectedLabelColor:
+                          const Color.fromARGB(255, 139, 139, 139),
+                      unselectedLabelStyle: const TextStyle(
+                          fontSize: 15, fontWeight: FontWeight.w500),
+                      isScrollable: true,
+                      tabs: <Widget>[
+                        Tab(
+                          text: "Liked",
+                        ),
+                        Tab(
+                          text: "Saved",
+                        ),
+                        Tab(
+                          text: "Uploads",
+                        ),
+                      ],
+                    ),
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Theme(
-                        data: ThemeData(
-                          highlightColor: Colors.transparent,
-                          splashColor: Colors.transparent,
-                        ),
-                        child: TabBar(
-                          labelPadding: const EdgeInsets.only(right: 10),
-                          controller: _tabController,
-                          indicatorWeight: 0,
-                          indicator: UnderlineTabIndicator(
-                            borderSide: BorderSide(
-                              width: 3.0,
-                              color: Theme.of(context).colorScheme.secondary,
-                            ),
-                            insets: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                            ),
-                          ),
-                          labelColor: Colors.black,
-                          labelStyle: const TextStyle(
-                              fontSize: 17, fontWeight: FontWeight.w500),
-                          unselectedLabelColor:
-                              const Color.fromARGB(255, 139, 139, 139),
-                          unselectedLabelStyle: const TextStyle(
-                              fontSize: 17, fontWeight: FontWeight.w500),
-                          isScrollable: true,
-                          tabs: <Widget>[
-                            Tab(
-                              text: "Liked",
-                            ),
-                            Tab(
-                              text: "Saved",
-                            ),
-                            Tab(
-                              text: "Uploads",
-                            ),
-                          ],
-                        ),
-                      ),
-                      const Spacer(),
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            viewer = viewer ? false : true;
-                          });
-                        },
-                        child: viewer
-                            ? const Icon(Icons.calendar_view_day_rounded)
-                            : const Icon(Icons.calendar_view_day),
-                      ),
-                    ],
+                  const Spacer(),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        viewer = viewer ? false : true;
+                      });
+                    },
+                    child: viewer
+                        ? const Icon(Icons.calendar_view_day_rounded)
+                        : const Icon(Icons.calendar_view_day),
                   ),
                 ],
               ),
