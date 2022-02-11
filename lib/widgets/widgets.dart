@@ -67,7 +67,7 @@ class GeneralWidgets {
                 children: [
                   const SizedBox(height: 20),
                   Text(
-                    "Login",
+                    "Sign in to your account",
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
@@ -557,7 +557,6 @@ class GeneralWidgets {
                 style: TextStyle(fontSize: 15, color: Colors.white54),
               ),
               const Spacer(),
-              SizedBox(width: 10),
               Row(
                 children: [
                   const Icon(
