@@ -72,8 +72,26 @@ class GeneralWidgets {
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 20),
-                  GeneralWidgets()._emailPasswordWidget(),
-                  const SizedBox(height: 20),
+                  GeneralWidgets()._emailPasswordWidget('login'),
+                  const SizedBox(height: 10),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: Container(
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        "Reset your password",
+                        textAlign: TextAlign.right,
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.grey.shade500,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 15),
                   GeneralWidgets()._submitButton(context, 'Login'),
                   const SizedBox(height: 30),
                   GestureDetector(
@@ -223,7 +241,7 @@ class GeneralWidgets {
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 20),
-                  GeneralWidgets()._emailPasswordWidget(),
+                  GeneralWidgets()._emailPasswordWidget('register'),
                   const SizedBox(height: 20),
                   GeneralWidgets()._submitButton(context, 'Create an account'),
                   const SizedBox(height: 30),
@@ -330,10 +348,11 @@ class GeneralWidgets {
     );
   }
 
-  Widget _emailPasswordWidget() {
+  Widget _emailPasswordWidget(String what) {
     return Column(
       children: <Widget>[
         _entryField("Email adress"),
+        if (what == "register") _entryField("Username"),
         _entryField("Password", isPassword: true),
       ],
     );
@@ -476,7 +495,7 @@ class GeneralWidgets {
                   ),
 
                   /// tags
-                  viewer ? videoBottomInfo() : Container(),
+                  videoBottomInfo(viewer),
                 ],
               ),
             ),
@@ -521,7 +540,7 @@ class GeneralWidgets {
                                 : const EdgeInsets.all(0),
                             decoration: viewer
                                 ? BoxDecoration(
-                                    color: const Color.fromRGBO(0, 0, 0, 0.45),
+                                    color: Color.fromARGB(180, 255, 255, 255),
                                     borderRadius: BorderRadius.circular(50),
                                   )
                                 : null,
@@ -529,7 +548,7 @@ class GeneralWidgets {
                               "Cars",
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.white,
+                                  color: Colors.black,
                                   fontSize: viewer ? 14 : 13),
                             ),
                           ),
@@ -544,7 +563,7 @@ class GeneralWidgets {
     );
   }
 
-  static videoBottomInfo() {
+  static videoBottomInfo(bool viewer) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Column(
@@ -554,29 +573,60 @@ class GeneralWidgets {
             children: [
               Text(
                 '1d ago',
-                style: TextStyle(fontSize: 15, color: Colors.white54),
+                style: TextStyle(
+                    fontSize: viewer ? 15 : 14, color: Colors.white54),
               ),
               const Spacer(),
-              Row(
-                children: [
-                  const Icon(
-                    Icons.favorite_border_outlined,
-                    size: 18,
-                    color: Colors.white38,
-                  ),
-                  const SizedBox(width: 3),
-                  Text(
-                    '1.3K',
-                    style: TextStyle(fontSize: 14, color: Colors.white54),
-                  ),
-                ],
-              ),
+              viewer
+                  ? Row(
+                      children: [
+                        const Icon(
+                          Icons.favorite_border_outlined,
+                          size: 18,
+                          color: Colors.white38,
+                        ),
+                        const SizedBox(width: 3),
+                        Text(
+                          '1.3K',
+                          style: TextStyle(fontSize: 14, color: Colors.white54),
+                        ),
+                      ],
+                    )
+                  : Container(),
             ],
           ),
           const SizedBox(height: 10),
         ],
       ),
     );
+  }
+
+  static Container viewerContainer(viewer) {
+    return Container(
+        decoration: BoxDecoration(
+          color: Constants.themeColor,
+          borderRadius: BorderRadius.circular(3),
+        ),
+        height: 22,
+        width: 22,
+        alignment: Alignment.center,
+        child: viewer
+            ? const Text(
+                '2',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 13,
+                ),
+              )
+            : const Text(
+                '3',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 13,
+                ),
+              ));
   }
 
   static categoryC(String category, [bool active = false]) {

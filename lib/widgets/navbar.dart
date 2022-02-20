@@ -2,6 +2,7 @@ import 'package:fake_story/screens/home.dart';
 import 'package:fake_story/screens/profile.dart';
 import 'package:fake_story/utils/app_constans.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 class CustomBottomNavigationBar extends StatefulWidget {
   final int defaultSelectedIndex;
@@ -17,12 +18,13 @@ class CustomBottomNavigationBar extends StatefulWidget {
 
 class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
   int _selectedIndex = 0;
-  List<IconData> _iconList = [
-    Icons.home,
-    Icons.card_giftcard,
-    Icons.file_upload_outlined,
-    Icons.bookmark,
-    Icons.person,
+
+  final List<String> _svgList = [
+    'asset/icons/home.svg',
+    'asset/icons/diamond.svg',
+    'asset/icons/upload.svg',
+    'asset/icons/vector.svg',
+    'asset/icons/user.svg'
   ];
 
   @override
@@ -37,8 +39,8 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
   Widget build(BuildContext context) {
     List<Widget> _navBarItemList = [];
 
-    for (var i = 0; i < _iconList.length; i++) {
-      _navBarItemList.add(buildNavBarItem(_iconList[i], i));
+    for (var i = 0; i < _svgList.length; i++) {
+      _navBarItemList.add(buildNavBarItem(_svgList[i], i));
     }
 
     return Row(
@@ -46,13 +48,13 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
     );
   }
 
-  Widget buildNavBarItem(IconData icon, int index) {
+  Widget buildNavBarItem(String icon, int index) {
     List<String> _stringList = [
       'Home',
       'Premium',
       'Upload',
-      'Saved',
       'Tools',
+      'Profile',
     ];
 
     return GestureDetector(
@@ -78,8 +80,8 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
         curve: Curves.fastOutSlowIn,
-        height: 80,
-        width: MediaQuery.of(context).size.width / _iconList.length,
+        height: 60,
+        width: MediaQuery.of(context).size.width / _svgList.length,
         decoration: index == 2
             ? BoxDecoration(
                 gradient: LinearGradient(
@@ -95,18 +97,20 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
         child: Column(
           children: [
             const SizedBox(height: 10),
-            Icon(
-              icon,
-              color: index == _selectedIndex
-                  ? Constants.themeColor
-                  : index == 2
-                      ? Colors.grey
+            SizedBox(
+              width: 20,
+              height: 20,
+              child: SvgPicture.asset(icon,
+                  color: index == _selectedIndex
+                      ? Constants.themeColor
                       : Colors.grey,
+                  semanticsLabel: _stringList[index]),
             ),
             const SizedBox(height: 5),
             Text(
               _stringList[index],
               style: TextStyle(
+                  fontSize: 14,
                   color: index == _selectedIndex
                       ? Constants.themeColor
                       : Colors.grey),

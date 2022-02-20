@@ -277,9 +277,7 @@ class _ProfilePageState extends State<ProfilePage>
                         viewer = viewer ? false : true;
                       });
                     },
-                    child: viewer
-                        ? const Icon(Icons.calendar_view_day_rounded)
-                        : const Icon(Icons.calendar_view_day),
+                    child: GeneralWidgets.viewerContainer(viewer),
                   ),
                 ],
               ),

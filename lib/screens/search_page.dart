@@ -144,9 +144,7 @@ class _SearchPageState extends State<SearchPage>
                         viewer = viewer ? false : true;
                       });
                     },
-                    child: viewer
-                        ? const Icon(Icons.calendar_view_day_rounded)
-                        : const Icon(Icons.calendar_view_day),
+                    child: GeneralWidgets.viewerContainer(viewer),
                   ),
                 ],
               ),
