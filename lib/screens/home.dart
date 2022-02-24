@@ -204,7 +204,7 @@ class _HomeVideosViewState extends State<HomeVideosView>
                 physics: const ScrollPhysics(),
                 primary: false,
                 itemBuilder: (context, index) {
-                  return GeneralWidgets.storyVideo(size, true,
+                  return GeneralWidgets.storyVideo(context, size, true,
                       showCategory: false);
                 },
               ),
@@ -270,7 +270,7 @@ class _HomeVideosViewState extends State<HomeVideosView>
                   )),
                 ),
                 DefaultTabController(
-                  length: 7,
+                  length: 9,
                   child: Theme(
                     //delete hover effect
                     data: ThemeData(
@@ -301,7 +301,13 @@ class _HomeVideosViewState extends State<HomeVideosView>
                       isScrollable: true,
                       tabs: [
                         Tab(
+                          text: "New",
+                        ),
+                        Tab(
                           text: "Popular",
+                        ),
+                        Tab(
+                          text: "Following",
                         ),
                         Tab(
                           text: "Cars",
@@ -375,14 +381,14 @@ class _HomeVideosViewState extends State<HomeVideosView>
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: viewer ? 2 : 3,
                 childAspectRatio: 0.571,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
+                crossAxisSpacing: Constants.gridSpacing,
+                mainAxisSpacing: Constants.gridSpacing,
               ),
               shrinkWrap: true,
               primary: false,
               itemCount: 12,
               itemBuilder: (BuildContext context, int index) {
-                return GeneralWidgets.storyVideo(size, viewer,
+                return GeneralWidgets.storyVideo(context, size, viewer,
                     showCategory: false);
               },
             ),
@@ -410,8 +416,8 @@ class _HomePhotosViewState extends State<HomePhotosView>
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: viewer ? 2 : 3,
         childAspectRatio: 0.571,
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 10,
+        crossAxisSpacing: Constants.gridSpacing,
+        mainAxisSpacing: Constants.gridSpacing,
       ),
       shrinkWrap: true,
       primary: false,

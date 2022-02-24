@@ -6,6 +6,8 @@ class Constants {
 
   static const labelColor = Color(0xff07070b);
 
+  static const double gridSpacing = 7;
+
   static Map<int, Color> color = {
     50: const Color.fromRGBO(187, 31, 213, .1),
     100: const Color.fromRGBO(187, 31, 213, .2),

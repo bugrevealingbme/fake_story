@@ -110,7 +110,8 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
             Text(
               _stringList[index],
               style: TextStyle(
-                  fontSize: 14,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
                   color: index == _selectedIndex
                       ? Constants.themeColor
                       : Colors.grey),
