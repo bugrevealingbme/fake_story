@@ -340,7 +340,7 @@ class _HomeVideosViewState extends State<HomeVideosView>
                   width: 22,
                   height: 22,
                   child: Image.asset(
-                    'asset/icons/lightning.png',
+                    'assets/icons/lightning.png',
                     color: const Color(0xffd3bc67),
                   ),
                 ),
@@ -356,7 +356,7 @@ class _HomeVideosViewState extends State<HomeVideosView>
                   width: 22,
                   height: 22,
                   child: Image.asset(
-                    'asset/icons/lightning.png',
+                    'assets/icons/lightning.png',
                     color: const Color(0xffd3bc67),
                   ),
                 ),
@@ -546,7 +546,7 @@ class _HomePhotosViewState extends State<HomePhotosView>
                   width: 22,
                   height: 22,
                   child: Image.asset(
-                    'asset/icons/lightning.png',
+                    'assets/icons/lightning.png',
                     color: const Color(0xffd3bc67),
                   ),
                 ),

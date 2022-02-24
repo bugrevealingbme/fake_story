@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:fake_story/screens/home.dart';
 import 'package:fake_story/screens/profile.dart';
 import 'package:fake_story/utils/app_constans.dart';
@@ -20,11 +22,11 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
   int _selectedIndex = 0;
 
   final List<String> _svgList = [
-    'asset/icons/home.svg',
-    'asset/icons/diamond.svg',
-    'asset/icons/upload.svg',
-    'asset/icons/vector.svg',
-    'asset/icons/user.svg'
+    'assets/icons/home.svg',
+    'assets/icons/diamond.svg',
+    'assets/icons/upload.svg',
+    'assets/icons/vector.svg',
+    'assets/icons/user.svg'
   ];
 
   @override
@@ -43,8 +45,21 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
       _navBarItemList.add(buildNavBarItem(_svgList[i], i));
     }
 
-    return Row(
-      children: _navBarItemList,
+    return Align(
+      heightFactor: 0.850,
+      alignment: FractionalOffset.bottomCenter,
+      child: ClipRect(
+        //I'm using BackdropFilter for the blurring effect
+        child: BackdropFilter(
+          filter: ImageFilter.blur(
+            sigmaX: 10,
+            sigmaY: 10,
+          ),
+          child: Row(
+            children: _navBarItemList,
+          ),
+        ),
+      ),
     );
   }
 
@@ -77,9 +92,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
           _selectedIndex = index;
         });
       },
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.fastOutSlowIn,
+      child: Container(
         height: 60,
         width: MediaQuery.of(context).size.width / _svgList.length,
         decoration: index == 2

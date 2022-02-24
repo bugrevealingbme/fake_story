@@ -61,21 +61,7 @@ class _DetailsPageState extends State<DetailsPage> {
     var size = MediaQuery.of(context).size;
 
     return Scaffold(
-      extendBodyBehindAppBar: true,
       backgroundColor: Colors.black,
-      floatingActionButtonLocation: FloatingActionButtonLocation.startTop,
-      floatingActionButton: GestureDetector(
-        onTap: () {
-          Navigator.pop(context);
-        },
-        child: Container(
-          height: 45.0,
-          width: 45.0,
-          decoration: const BoxDecoration(
-              shape: BoxShape.circle, color: Colors.black54),
-          child: const Icon(Icons.chevron_left, color: Colors.white),
-        ),
-      ),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -88,10 +74,44 @@ class _DetailsPageState extends State<DetailsPage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Container(
-              decoration: BoxDecoration(
-                  color: Colors.white, borderRadius: BorderRadius.circular(20)),
+              decoration: const BoxDecoration(
+                color: Constants.primaryColor,
+              ),
               child: Column(
                 children: [
+                  // #save_view_buttons
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                          child: const Icon(
+                            Icons.chevron_left,
+                            size: 32,
+                          ),
+                        ),
+                        const SizedBox(width: 15),
+                        Flexible(
+                            child: MaterialButton(
+                          elevation: 0,
+                          height: 40,
+                          onPressed: () {},
+                          color: Constants.themeColor,
+                          shape: const StadiumBorder(),
+                          child: Text(
+                            "Download",
+                            style: const TextStyle(
+                                color: Colors.white, fontSize: 16),
+                          ),
+                        )),
+                      ],
+                    ),
+                  ),
                   // #post_image
                   ClipRRect(
                     child: Stack(
@@ -106,6 +126,7 @@ class _DetailsPageState extends State<DetailsPage> {
                       ],
                     ),
                   ),
+                  const SizedBox(height: 5),
 
                   // #profile_info
                   ListTile(
@@ -120,63 +141,46 @@ class _DetailsPageState extends State<DetailsPage> {
                             style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ),
+                        const SizedBox(width: 3),
+                        Text(
+                          "● 167 follower",
+                          style:
+                              const TextStyle(fontSize: 13, color: Colors.grey),
+                        ),
                       ],
                     ),
                     trailing: MaterialButton(
                       elevation: 0,
-                      height: 40,
                       onPressed: () {},
-                      color: Colors.grey.shade200,
+                      color: Constants.themeColor,
                       child: const Text(
                         "Follow",
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          fontSize: 14,
+                        ),
                       ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(50),
                       ),
                     ),
                   ),
-
-                  // #save_view_buttons
-                  Container(
-                    padding: const EdgeInsets.all(15),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Expanded(
-                            child: MaterialButton(
-                          elevation: 0,
-                          height: 50,
-                          onPressed: () {},
-                          color: Constants.themeColor,
-                          shape: const StadiumBorder(),
-                          child: Text(
-                            "Download",
-                            style: const TextStyle(
-                                color: Colors.white, fontSize: 16),
-                          ),
-                        )),
-                      ],
-                    ),
-                  )
+                  const SizedBox(height: 5),
                 ],
               ),
             ),
-            const SizedBox(
-              height: 5,
-            ),
             Container(
-              margin: const EdgeInsets.only(top: 5),
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
               decoration: BoxDecoration(
-                  color: Colors.white, borderRadius: BorderRadius.circular(20)),
+                color: Constants.primaryColor,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text("More like this",
                       style: const TextStyle(
-                          fontSize: 20, fontWeight: FontWeight.w600)),
+                          fontSize: 18, fontWeight: FontWeight.w600)),
                   const SizedBox(
                     height: 15,
                   ),
