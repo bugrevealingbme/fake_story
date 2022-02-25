@@ -46,17 +46,23 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
     }
 
     return Align(
-      heightFactor: 0.850,
       alignment: FractionalOffset.bottomCenter,
+      heightFactor: 1,
       child: ClipRect(
         //I'm using BackdropFilter for the blurring effect
         child: BackdropFilter(
           filter: ImageFilter.blur(
-            sigmaX: 10,
-            sigmaY: 10,
+            sigmaX: 7,
+            sigmaY: 7,
           ),
-          child: Row(
-            children: _navBarItemList,
+          child: Container(
+            decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.970),
+                border: const Border(
+                    top: BorderSide(width: 0.5, color: Colors.grey))),
+            child: Row(
+              children: _navBarItemList,
+            ),
           ),
         ),
       ),
@@ -106,7 +112,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
                   end: Alignment.topCenter,
                 ),
               )
-            : const BoxDecoration(),
+            : const BoxDecoration(color: Colors.transparent),
         child: Column(
           children: [
             const SizedBox(height: 10),

@@ -179,43 +179,10 @@ Future<void> gallerySheet(BuildContext context) {
                           onPressed: () {
                             Navigator.pop(context);
                           },
-                          icon: Icon(Icons.close),
+                          icon: const Icon(Icons.close),
                         ),
                         const Spacer(),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: const Color(0xfff2f4f5),
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 5, horizontal: 10),
-                          child: DefaultTabController(
-                            length: 2,
-                            child: TabBar(
-                              indicator: BoxDecoration(
-                                borderRadius: BorderRadius.circular(15),
-                                color: Colors.white,
-                              ),
-                              labelPadding: const EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 0),
-                              labelColor: Colors.black,
-                              labelStyle: const TextStyle(
-                                  fontSize: 14, fontWeight: FontWeight.w500),
-                              unselectedLabelColor: Colors.grey,
-                              unselectedLabelStyle: const TextStyle(
-                                  fontSize: 14, fontWeight: FontWeight.w300),
-                              isScrollable: true,
-                              tabs: const [
-                                Tab(
-                                  text: "Photos",
-                                ),
-                                Tab(
-                                  text: "Albums",
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
+                        GeneralWidgets.srtLabel("Recent Photos"),
                         const Spacer(),
                         IconButton(
                           onPressed: () async {
@@ -235,10 +202,6 @@ Future<void> gallerySheet(BuildContext context) {
                           icon: const Icon(Icons.more_vert),
                         ),
                       ],
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(15),
-                      child: GeneralWidgets.srtLabel("Recent"),
                     ),
                     GridGallery(),
                   ],

@@ -30,6 +30,9 @@ class _DetailsPageState extends State<DetailsPage> {
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
+        print(_scrollController.offset);
+        print(_scrollController.position.pixels);
+
         setState(() {
           isLoadPage = true;
         });
@@ -61,7 +64,22 @@ class _DetailsPageState extends State<DetailsPage> {
     var size = MediaQuery.of(context).size;
 
     return Scaffold(
+      extendBodyBehindAppBar: true,
       backgroundColor: Colors.black,
+      floatingActionButtonLocation: FloatingActionButtonLocation.startTop,
+      floatingActionButton: GestureDetector(
+        onTap: () {
+          Navigator.pop(context);
+        },
+        child: Container(
+          margin: const EdgeInsets.only(top: 10),
+          height: 40,
+          width: 40,
+          decoration: const BoxDecoration(
+              shape: BoxShape.circle, color: Colors.black54),
+          child: const Icon(Icons.chevron_left, color: Colors.white),
+        ),
+      ),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -79,100 +97,82 @@ class _DetailsPageState extends State<DetailsPage> {
               ),
               child: Column(
                 children: [
-                  // #save_view_buttons
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                          child: const Icon(
-                            Icons.chevron_left,
-                            size: 32,
-                          ),
-                        ),
-                        const SizedBox(width: 15),
-                        Flexible(
-                            child: MaterialButton(
-                          elevation: 0,
-                          height: 40,
-                          onPressed: () {},
-                          color: Constants.themeColor,
-                          shape: const StadiumBorder(),
-                          child: Text(
-                            "Download",
-                            style: const TextStyle(
-                                color: Colors.white, fontSize: 16),
-                          ),
-                        )),
-                      ],
-                    ),
-                  ),
                   // #post_image
-                  ClipRRect(
-                    child: Stack(
+                  AspectRatio(
+                    aspectRatio: 1,
+                    child: CachedNetworkImage(
+                      imageUrl: widget.imageUrl,
+                      placeholder: (context, url) =>
+                          Image.asset("assets/images/default.png"),
+                      errorWidget: (context, url, error) =>
+                          Image.asset("assets/images/default.png"),
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 15, vertical: 0),
+                    child: Row(
                       children: [
-                        CachedNetworkImage(
-                          imageUrl: widget.imageUrl,
-                          placeholder: (context, url) =>
-                              Image.asset("assets/images/default.png"),
-                          errorWidget: (context, url, error) =>
-                              Image.asset("assets/images/default.png"),
+                        Expanded(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Constants.themeColor.withOpacity(0.10),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: TextButton.icon(
+                              onPressed: () {},
+                              icon: const Icon(Icons.download_rounded),
+                              label: Text(
+                                "Download",
+                                style: const TextStyle(fontSize: 16),
+                              ),
+                            ),
+                          ),
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 5),
 
                   // #profile_info
                   ListTile(
-                    title: Row(
-                      children: [
-                        Text("by"),
-                        const SizedBox(width: 4),
-                        GestureDetector(
-                          onTap: () {},
-                          child: Text(
-                            "Abuzer",
-                            style: const TextStyle(fontWeight: FontWeight.bold),
+                      title: Row(
+                        children: [
+                          Text("by"),
+                          const SizedBox(width: 4),
+                          GestureDetector(
+                            onTap: () {},
+                            child: Text(
+                              "Abuzer",
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          const SizedBox(width: 3),
+                          Text(
+                            "● 167 follower",
+                            style: const TextStyle(
+                                fontSize: 13, color: Colors.grey),
+                          ),
+                        ],
+                      ),
+                      trailing: TextButton(
+                        onPressed: (() {}),
+                        child: const Text(
+                          "Follow",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
                           ),
                         ),
-                        const SizedBox(width: 3),
-                        Text(
-                          "● 167 follower",
-                          style:
-                              const TextStyle(fontSize: 13, color: Colors.grey),
-                        ),
-                      ],
-                    ),
-                    trailing: MaterialButton(
-                      elevation: 0,
-                      onPressed: () {},
-                      color: Constants.themeColor,
-                      child: const Text(
-                        "Follow",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          fontSize: 14,
-                        ),
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(50),
-                      ),
-                    ),
-                  ),
+                      )),
                   const SizedBox(height: 5),
                 ],
               ),
             ),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: Constants.primaryColor,
               ),
               child: Column(
@@ -181,9 +181,6 @@ class _DetailsPageState extends State<DetailsPage> {
                   Text("More like this",
                       style: const TextStyle(
                           fontSize: 18, fontWeight: FontWeight.w600)),
-                  const SizedBox(
-                    height: 15,
-                  ),
                   MasonryGridView.count(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),

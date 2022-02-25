@@ -301,10 +301,10 @@ class _HomeVideosViewState extends State<HomeVideosView>
                       isScrollable: true,
                       tabs: [
                         Tab(
-                          text: "New",
+                          text: "Popular",
                         ),
                         Tab(
-                          text: "Popular",
+                          text: "New",
                         ),
                         Tab(
                           text: "Following",

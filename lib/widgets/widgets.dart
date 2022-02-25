@@ -424,7 +424,7 @@ class GeneralWidgets {
           context,
           MaterialPageRoute(
             builder: (context) =>
-                DetailsPage(imageUrl: 'https://picsum.photos/850'),
+                DetailsPage(imageUrl: 'https://picsum.photos/1950'),
           ),
         );
       }),
