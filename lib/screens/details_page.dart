@@ -178,7 +178,7 @@ class _DetailsPageState extends State<DetailsPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Text("More like this",
+                  Text("More this category",
                       style: const TextStyle(
                           fontSize: 18, fontWeight: FontWeight.w600)),
                   MasonryGridView.count(

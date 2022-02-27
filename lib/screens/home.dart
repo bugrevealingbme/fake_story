@@ -333,22 +333,6 @@ class _HomeVideosViewState extends State<HomeVideosView>
                 ),
               ],
             ),
-            /*  const SizedBox(height: 30),
-            Row(
-              children: [
-                SizedBox(
-                  width: 22,
-                  height: 22,
-                  child: Image.asset(
-                    'assets/icons/lightning.png',
-                    color: const Color(0xffd3bc67),
-                  ),
-                ),
-                const SizedBox(width: 7),
-                GeneralWidgets.crtLabel('Fresh'),
-              ],
-            ),
-            const Divider(), */
             const SizedBox(height: 20),
             Row(
               children: [
@@ -374,9 +358,6 @@ class _HomeVideosViewState extends State<HomeVideosView>
               ],
             ),
             const SizedBox(height: 20),
-            //categoryWithVideos(size, 'Cars'),
-            //categoryWithVideos(size, 'Girls'),
-            //categoryWithVideos(size, 'Travel'),
             GridView.builder(
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: viewer ? 2 : 3,
