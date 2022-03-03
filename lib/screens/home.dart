@@ -373,6 +373,7 @@ class _HomeVideosViewState extends State<HomeVideosView>
                     showCategory: false);
               },
             ),
+            const SizedBox(height: 10),
           ],
         ),
       ),
@@ -546,6 +547,7 @@ class _HomePhotosViewState extends State<HomePhotosView>
             ),
             const SizedBox(height: 10),
             photoBuble(size, 'Cars', viewer),
+            const SizedBox(height: 10),
           ],
         ),
       ),

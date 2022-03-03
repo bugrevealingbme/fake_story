@@ -6,6 +6,8 @@ import 'package:fake_story/utils/app_constans.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
+import 'widgets.dart';
+
 class CustomBottomNavigationBar extends StatefulWidget {
   final int defaultSelectedIndex;
   final Function(int) onChange;
@@ -88,6 +90,8 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
                 MaterialPageRoute(
                   builder: (_) => const ProfilePage(),
                 ));
+          } else if (index == 1 && _selectedIndex != index) {
+            GeneralWidgets.vipDialog(context);
           } else if (index == 0 && _selectedIndex != index) {
             Navigator.push(
                 context,
@@ -95,6 +99,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
                   builder: (_) => const MyHomePage(),
                 ));
           }
+
           _selectedIndex = index;
         });
       },

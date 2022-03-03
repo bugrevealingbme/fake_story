@@ -412,6 +412,254 @@ class GeneralWidgets {
     );
   }
 
+  static void vipDialog(BuildContext context) async {
+    vipTopFeatures() {
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Image.asset(
+            'assets/icons/square.png',
+            width: 26,
+            height: 26,
+          ),
+          const SizedBox(width: 10),
+          Text(
+            "New feautures",
+            style: const TextStyle(
+              fontWeight: FontWeight.w400,
+              fontSize: 15,
+            ),
+          ),
+        ],
+      );
+    }
+
+    await Navigator.of(context).push(
+      MaterialPageRoute<String>(
+          builder: (BuildContext context) {
+            return Scaffold(
+              appBar: AppBar(
+                backgroundColor: Constants.primaryColor,
+                elevation: 0,
+                iconTheme: const IconThemeData(color: Color(0xff222222)),
+                actions: [
+                  IconButton(onPressed: () {}, icon: const Icon(Icons.restore)),
+                ],
+              ),
+              body: Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+                padding: const EdgeInsets.all(20),
+                color: Colors.white,
+                child: Column(
+                  children: [
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        vipTopFeatures(),
+                        const SizedBox(height: 10),
+                        vipTopFeatures(),
+                        const SizedBox(height: 10),
+                        vipTopFeatures(),
+                        const SizedBox(height: 10),
+                        vipTopFeatures(),
+                        const SizedBox(height: 10),
+                        vipTopFeatures(),
+                        const SizedBox(height: 10),
+                        vipTopFeatures(),
+                        const SizedBox(height: 20),
+                        Text(
+                          "and much more",
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w400,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    const Divider(),
+                    const SizedBox(height: 20),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Container(
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                  width: 1,
+                                  color: Colors.grey.shade300,
+                                )),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 5, vertical: 10),
+                            child: Column(
+                              children: [
+                                Text(
+                                  "Monthly",
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w400),
+                                ),
+                                const SizedBox(height: 5),
+                                Text(
+                                  "\$9.99",
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                      fontSize: 19,
+                                      fontWeight: FontWeight.w600),
+                                ),
+                                const SizedBox(height: 5),
+                                Text(
+                                  "Cancel anytime",
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                      fontSize: 12, color: Colors.grey),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Stack(
+                            clipBehavior: Clip.none,
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(
+                                      width: 1,
+                                      color: Constants.themeColor,
+                                    )),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 5, vertical: 10),
+                                width: double.infinity,
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      "Yearly",
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w400),
+                                    ),
+                                    const SizedBox(height: 5),
+                                    Text(
+                                      "\$99.9",
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                          fontSize: 19,
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                    const SizedBox(height: 5),
+                                    Text(
+                                      "\$8.9 monthly",
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                          fontSize: 12, color: Colors.grey),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Positioned(
+                                top: -12,
+                                left: 0,
+                                right: 0,
+                                child: Align(
+                                  alignment: Alignment.center,
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: Constants.themeColor,
+                                      borderRadius: BorderRadius.circular(50),
+                                    ),
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 10,
+                                      vertical: 3,
+                                    ),
+                                    child: Text(
+                                      "Save % 24",
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          Icons.health_and_safety,
+                          size: 18,
+                          color: Colors.grey,
+                        ),
+                        Text(
+                          "The payment is securely allocated by the Play Store.",
+                          style: const TextStyle(color: Colors.grey),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Constants.themeColor,
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      child: TextButton(
+                        onPressed: () {},
+                        child: Text(
+                          "Pay Now",
+                          style: const TextStyle(
+                              fontSize: 16, color: Colors.white),
+                        ),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text(
+                        "I'll do later",
+                        style: const TextStyle(
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text(
+                        "Abonelik satın alarak gizlilk falan filan Lorem Ipsum, dizgi ve baskı endüstrisinde kullanılan mıgır metinlerdir. Lorem Ipsum, adı bilinmeyen bir matbaacının bir hurufat numune kitabı oluştur",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.grey.shade400,
+                          fontWeight: FontWeight.w400,
+                          fontSize: 11,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+          fullscreenDialog: true),
+    );
+  }
+
   static storyVideo(
     context,
     Size size,
@@ -548,25 +796,22 @@ class GeneralWidgets {
                   //category
                   showCategory
                       ? Positioned(
-                          left: viewer ? 15 : 10,
-                          top: viewer ? 15 : 10,
+                          left: 10,
+                          top: 10,
                           child: Container(
-                            padding: viewer
-                                ? const EdgeInsets.symmetric(
-                                    vertical: 5, horizontal: 13)
-                                : const EdgeInsets.all(0),
-                            decoration: viewer
-                                ? BoxDecoration(
-                                    color: Color.fromARGB(180, 255, 255, 255),
-                                    borderRadius: BorderRadius.circular(50),
-                                  )
-                                : null,
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 5, horizontal: 6),
+                            decoration: BoxDecoration(
+                              color: Color.fromARGB(180, 255, 255, 255),
+                              borderRadius: BorderRadius.circular(50),
+                            ),
                             child: Text(
                               "Cars",
                               style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                  fontSize: viewer ? 14 : 13),
+                                color: Color(0xff111111),
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
                           ),
                         )
