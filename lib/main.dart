@@ -1,5 +1,6 @@
 import 'package:fake_story/bloc/cubit/login_cubit.dart';
 import 'package:fake_story/bloc/repository/login_repository.dart';
+import 'package:fake_story/screens/auth_screen.dart';
 import 'package:fake_story/screens/home.dart';
 import 'package:fake_story/screens/login_screen.dart';
 import 'package:fake_story/utils/app_constans.dart';
@@ -31,7 +32,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: MaterialColor(0xffBB1FD5, Constants.color),
         ),
-        home: const LoginScreen(),
+        home: const AuthPage(),
         debugShowCheckedModeBanner: false,
       ),
     );
