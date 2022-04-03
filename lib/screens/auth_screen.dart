@@ -380,12 +380,9 @@ class _AuthPageState extends State<AuthPage> {
                                                 textfieldsStrings[0],
                                                 textfieldsStrings[1],
                                               );
-
-                                          if (state is UserLoadedState) {
-                                            setState(() => {
-                                                  register = false,
-                                                });
-                                          }
+                                          setState(() => {
+                                                register = false,
+                                              });
                                         }
                                       }
                                     }
@@ -404,16 +401,12 @@ class _AuthPageState extends State<AuthPage> {
                                             CustomSharedPref
                                                 .readStringDataToSharedPref(
                                                     "accessToken"),
-                                            print(state),
-                                            if (state is AccesTokenCreatedState)
-                                              {
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          const MyHomePage()),
-                                                )
-                                              }
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      const MyHomePage()),
+                                            )
                                           });
                                 }
                               }
@@ -441,7 +434,7 @@ class _AuthPageState extends State<AuthPage> {
                               ),
                             ),
                             Text(
-                              'x',
+                              'FSTORY',
                               style: GoogleFonts.poppins(
                                 color: const Color(0xff3b22a1),
                                 fontSize: size.height * 0.06,
