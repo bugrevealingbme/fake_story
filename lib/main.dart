@@ -1,8 +1,9 @@
-import 'package:fake_story/bloc/cubit/login_cubit.dart';
-import 'package:fake_story/bloc/repository/login_repository.dart';
+import 'package:fake_story/bloc/cubit/user_cubit.dart';
+import 'package:fake_story/bloc/repository/user_repository.dart';
 import 'package:fake_story/screens/auth_screen.dart';
 import 'package:fake_story/screens/home.dart';
 import 'package:fake_story/screens/login_screen.dart';
+import 'package:fake_story/screens/splash_screen.dart';
 import 'package:fake_story/utils/app_constans.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -25,14 +26,14 @@ class MyApp extends StatelessWidget {
 
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => LoginCubit(LoginDaoRepository()))
+        BlocProvider(create: (context) => UserCubit(UserDaoRepository()))
       ],
       child: MaterialApp(
         title: 'Fake Story',
         theme: ThemeData(
           primarySwatch: MaterialColor(0xffBB1FD5, Constants.color),
         ),
-        home: const AuthPage(),
+        home: const SplashScreen(),
         debugShowCheckedModeBanner: false,
       ),
     );

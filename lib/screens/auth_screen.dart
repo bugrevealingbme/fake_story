@@ -1,7 +1,14 @@
+import 'package:fake_story/bloc/cubit/user_cubit.dart';
+import 'package:fake_story/bloc/states/user_states.dart';
 import 'package:fake_story/components/profile/login_button.dart';
 import 'package:fake_story/screens/forgot_password.dart';
+import 'package:fake_story/screens/home.dart';
+import 'package:fake_story/utils/shared_prefs_ext.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:logger/logger.dart';
+import '../api/endpoints.dart';
 
 class AuthPage extends StatefulWidget {
   const AuthPage({Key? key}) : super(key: key);
@@ -11,6 +18,27 @@ class AuthPage extends StatefulWidget {
 }
 
 class _AuthPageState extends State<AuthPage> {
+  @override
+  void initState() {
+    super.initState();
+    var key = CustomSharedPref.readStringDataToSharedPref("accessToken");
+    key.then((value) => {
+          if (value == null)
+            {
+              setState(
+                () => {register = true},
+              )
+            }
+          else
+            {
+              setState(
+                () => {register = false},
+              )
+            }
+        });
+  }
+
+  bool isLoginState = false;
   bool checkedValue = false;
   bool register = true;
   List textfieldsStrings = [
@@ -34,7 +62,14 @@ class _AuthPageState extends State<AuthPage> {
     bool isDarkMode = brightness == Brightness.dark;
     return Scaffold(
       body: Center(
-        child: Container(
+          child: BlocBuilder<UserCubit, UserState>(builder: (context, state) {
+        if (state is UserLoadingState) {
+          const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+
+        return Container(
           height: size.height,
           width: size.height,
           decoration: BoxDecoration(
@@ -89,28 +124,26 @@ class _AuthPageState extends State<AuthPage> {
                       Padding(
                         padding: EdgeInsets.only(top: size.height * 0.01),
                       ),
-                      register
-                          ? buildTextField(
-                              "First Name",
-                              Icons.person_outlined,
-                              false,
+                      buildTextField(
+                        "First Name",
+                        Icons.person_outlined,
+                        false,
+                        size,
+                        (valuename) {
+                          if (valuename.length <= 2) {
+                            buildSnackError(
+                              'Invalid name',
+                              context,
                               size,
-                              (valuename) {
-                                if (valuename.length <= 2) {
-                                  buildSnackError(
-                                    'Invalid name',
-                                    context,
-                                    size,
-                                  );
-                                  return '';
-                                }
-                                return null;
-                              },
-                              _firstnamekey,
-                              0,
-                              isDarkMode,
-                            )
-                          : Container(),
+                            );
+                            return '';
+                          }
+                          return null;
+                        },
+                        _firstnamekey,
+                        0,
+                        isDarkMode,
+                      ),
                       register
                           ? buildTextField(
                               "Last Name",
@@ -134,36 +167,38 @@ class _AuthPageState extends State<AuthPage> {
                             )
                           : Container(),
                       Form(
-                        child: buildTextField(
-                          "Email",
-                          Icons.email_outlined,
-                          false,
-                          size,
-                          (valuemail) {
-                            if (valuemail.length < 5) {
-                              buildSnackError(
-                                'Invalid email',
-                                context,
+                        child: register
+                            ? buildTextField(
+                                "Email",
+                                Icons.email_outlined,
+                                false,
                                 size,
-                              );
-                              return '';
-                            }
-                            if (!RegExp(
-                                    r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+.[a-zA-Z]+")
-                                .hasMatch(valuemail)) {
-                              buildSnackError(
-                                'Invalid email',
-                                context,
-                                size,
-                              );
-                              return '';
-                            }
-                            return null;
-                          },
-                          _emailKey,
-                          2,
-                          isDarkMode,
-                        ),
+                                (valuemail) {
+                                  if (valuemail.length < 5) {
+                                    buildSnackError(
+                                      'Invalid email',
+                                      context,
+                                      size,
+                                    );
+                                    return '';
+                                  }
+                                  if (!RegExp(
+                                          r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+.[a-zA-Z]+")
+                                      .hasMatch(valuemail)) {
+                                    buildSnackError(
+                                      'Invalid email',
+                                      context,
+                                      size,
+                                    );
+                                    return '';
+                                  }
+                                  return null;
+                                },
+                                _emailKey,
+                                2,
+                                isDarkMode,
+                              )
+                            : Container(),
                       ),
                       Form(
                         child: buildTextField(
@@ -321,6 +356,9 @@ class _AuthPageState extends State<AuthPage> {
                             Colors.white,
                           ],
                           onPressed: () async {
+                            setState(() {
+                              isLoginState = true;
+                            });
                             if (register) {
                               //validation for register
                               if (_firstnamekey.currentState!.validate()) {
@@ -335,7 +373,19 @@ class _AuthPageState extends State<AuthPage> {
                                               context,
                                               size);
                                         } else {
-                                          print('register');
+                                          context.read<UserCubit>().createUser(
+                                                textfieldsStrings[0],
+                                                textfieldsStrings[3],
+                                                textfieldsStrings[2],
+                                                textfieldsStrings[0],
+                                                textfieldsStrings[1],
+                                              );
+
+                                          if (state is UserLoadedState) {
+                                            setState(() => {
+                                                  register = false,
+                                                });
+                                          }
                                         }
                                       }
                                     }
@@ -344,9 +394,27 @@ class _AuthPageState extends State<AuthPage> {
                               }
                             } else {
                               //validation for login
-                              if (_emailKey.currentState!.validate()) {
+                              if (_firstnamekey.currentState!.validate()) {
                                 if (_passwordKey.currentState!.validate()) {
-                                  print('login');
+                                  context
+                                      .read<UserCubit>()
+                                      .createToken(textfieldsStrings[0],
+                                          textfieldsStrings[3])
+                                      .then((value) => {
+                                            CustomSharedPref
+                                                .readStringDataToSharedPref(
+                                                    "accessToken"),
+                                            print(state),
+                                            if (state is AccesTokenCreatedState)
+                                              {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          const MyHomePage()),
+                                                )
+                                              }
+                                          });
                                 }
                               }
                             }
@@ -456,8 +524,8 @@ class _AuthPageState extends State<AuthPage> {
               ],
             ),
           ),
-        ),
-      ),
+        );
+      })),
     );
   }
 
