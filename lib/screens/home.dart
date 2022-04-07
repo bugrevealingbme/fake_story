@@ -104,7 +104,7 @@ class _MyHomePageState extends State<MyHomePage>
                           controller: _tabController,
                           indicator: BoxDecoration(
                             borderRadius: BorderRadius.circular(100),
-                            color: Color(0xfff0dff3),
+                            color: const Color(0xfff0dff3),
                           ),
                           labelPadding: const EdgeInsets.symmetric(
                               horizontal: 15, vertical: 0),
@@ -119,10 +119,10 @@ class _MyHomePageState extends State<MyHomePage>
                               fontSize: 15, fontWeight: FontWeight.w400),
                           isScrollable: true,
                           tabs: <Widget>[
-                            Tab(
+                            const Tab(
                               text: "Videos",
                             ),
-                            Tab(
+                            const Tab(
                               text: "Photos",
                             ),
                           ],
@@ -300,31 +300,31 @@ class _HomeVideosViewState extends State<HomeVideosView>
                           fontSize: 16, fontWeight: FontWeight.w500),
                       isScrollable: true,
                       tabs: [
-                        Tab(
+                        const Tab(
                           text: "Popular",
                         ),
-                        Tab(
+                        const Tab(
                           text: "New",
                         ),
-                        Tab(
+                        const Tab(
                           text: "Following",
                         ),
-                        Tab(
+                        const Tab(
                           text: "Cars",
                         ),
-                        Tab(
+                        const Tab(
                           text: "Girls",
                         ),
-                        Tab(
+                        const Tab(
                           text: "Holiday",
                         ),
-                        Tab(
+                        const Tab(
                           text: "Travel",
                         ),
-                        Tab(
+                        const Tab(
                           text: "Cars",
                         ),
-                        Tab(
+                        const Tab(
                           text: "Cars",
                         ),
                       ],
@@ -561,9 +561,10 @@ class _HomePhotosViewState extends State<HomePhotosView>
 Row viewAll() {
   return Row(
     children: [
-      Text(
+      const Text(
         "View all",
-        style: TextStyle(color: Color(0xffb6b4b4), fontWeight: FontWeight.w500),
+        style: TextStyle(
+            color: const Color(0xffb6b4b4), fontWeight: FontWeight.w500),
       ),
       const Icon(
         Icons.keyboard_arrow_right_rounded,

@@ -17,19 +17,8 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
     // TODO: delete this after test
     Future.delayed(const Duration(seconds: 3), () {
-      var key = CustomSharedPref.readStringDataToSharedPref("accessToken");
-      key.then((value) => {
-            if (value == null)
-              {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => const AuthPage()))
-              }
-            else
-              {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => const MyHomePage()))
-              }
-          });
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => const MyHomePage()));
     });
   }
 

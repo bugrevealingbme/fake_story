@@ -53,6 +53,8 @@ dependencies:
   dio: ^4.0.6
   #sharedPref
   shared_preferences: ^2.0.13
+  intl: ^0.17.0
+  get: ^4.6.1
 
 dev_dependencies:
   flutter_test:
