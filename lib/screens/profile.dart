@@ -1,13 +1,19 @@
+import 'dart:io';
+
 import 'package:fake_story/bloc/cubit/user_cubit.dart';
 import 'package:fake_story/utils/app_constans.dart';
 import 'package:fake_story/utils/string.extension.dart';
 import 'package:fake_story/widgets/navbar.dart';
 import 'package:fake_story/widgets/widgets.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../bloc/states/user_states.dart';
 import '../utils/shared_prefs_ext.dart';
+
+import 'package:flutter/foundation.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -21,13 +27,83 @@ class _ProfilePageState extends State<ProfilePage>
   int _selectedTag = 0;
   bool viewer = false;
   late TabController _tabController;
+  File? _image;
+  final picker = ImagePicker();
 
   @override
   void initState() {
     _tabController = TabController(vsync: this, initialIndex: 0, length: 3);
+
     super.initState();
     CustomSharedPref.readStringDataToSharedPref("accessToken")
         .then((value) => {context.read<UserCubit>().getCurrentUser(value!)});
+  }
+
+  Future getImage() async {
+    final choice = await showDialog<String>(
+        context: context,
+        builder: (context) => AlertDialog(
+              title: Text(
+                "Profil Fotoğrafınızın Türü nedir",
+                style: TextStyle(color: Colors.black),
+              ),
+              content: SingleChildScrollView(
+                  child: ListBody(
+                children: const <Widget>[
+                  Text('Yüklemek istediğiniz fotoğrafın türünü seçiniz'),
+                ],
+              )),
+              actions: [
+                // ignore: deprecated_member_use
+                TextButton(
+                    onPressed: () => Navigator.pop(context, "jpeg"),
+                    child: Text("Jpeg/Png")),
+                // ignore: deprecated_member_use
+                TextButton(
+                    onPressed: () => Navigator.pop(context, "gif"),
+                    child: Text("gif")),
+              ],
+            ));
+    if (choice == "jpeg") {
+      final pickedFile =
+          await picker.getImage(source: ImageSource.gallery, imageQuality: 50);
+      setState(() {
+        if (pickedFile != null) {
+          print("aldı imageyi");
+          _image = File(pickedFile.path);
+          // AnimesonApiManager().uploadProfilePic(_image, _userid).then((value) {
+          //   if (value == 200) {
+          //     print("çalıştı");
+          //     AppProviderContainer.userDataProvider.setProfilepicFile(_image);
+          //   } else {
+          //     print("error");
+          //   }
+          // });
+        } else {
+          print('No image selected.');
+        }
+      });
+    } else if (choice == "gif") {
+      FilePickerResult? result = await FilePicker.platform
+          .pickFiles(type: FileType.custom, allowedExtensions: ["gif"]);
+      if (result != null) {
+        setState(() {
+          _image = File(result.files.single.path!);
+          // AnimesonApiManager().uploadProfilePic(_image, _userid).then((value) {
+          //   if (value == 200) {
+          //     print("çalıştı");
+          //     AppProviderContainer.userDataProvider.setProfilepicFile(_image);
+          //   } else {
+          //     print("error");
+          //   }
+          // });
+        });
+      } else {
+        print("seçim yapılmamış");
+      }
+    } else {
+      print("Seçim yapılmamış");
+    }
   }
 
   @override
@@ -78,13 +154,19 @@ class _ProfilePageState extends State<ProfilePage>
                     children: [
                       Row(
                         children: [
-                          SizedBox(
-                            height: 64,
-                            width: 64,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(50),
-                              child: Image.network('https://picsum.photos/850',
-                                  fit: BoxFit.cover),
+                          InkWell(
+                            onTap: () {
+                              getImage();
+                            },
+                            child: SizedBox(
+                              height: 64,
+                              width: 64,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(50),
+                                child: Image.network(
+                                    'https://picsum.photos/850',
+                                    fit: BoxFit.cover),
+                              ),
                             ),
                           ),
                           const SizedBox(width: 15),

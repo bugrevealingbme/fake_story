@@ -1,11 +1,7 @@
 import 'dart:io';
 
-import 'package:fake_story/api/api_calls/detail_page_calls.dart';
 import 'package:fake_story/bloc/cubit/user_cubit.dart';
 import 'package:fake_story/bloc/repository/user_repository.dart';
-import 'package:fake_story/screens/auth_screen.dart';
-import 'package:fake_story/screens/home.dart';
-import 'package:fake_story/screens/login_screen.dart';
 import 'package:fake_story/screens/splash_screen.dart';
 import 'package:fake_story/utils/app_constans.dart';
 import 'package:fake_story/utils/config.dart';
@@ -14,16 +10,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 
-void main() async {
-  var data=await DetailPageCalls.userProfileUpdate({"profileimage":"http://enesakoluk.ml/1"});
-  print(data);
-
- 
- 
-   
-  
+void main() {
   runApp(const MyApp());
- 
 }
 
 class MyApp extends StatefulWidget {
@@ -36,7 +24,6 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   void didChangeDependencies() {
-    
     print(Platform.localeName);
     getLocale().then((locale) {
       setState(() {

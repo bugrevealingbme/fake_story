@@ -1,4 +1,3 @@
-
 class CategoryModel {
   int? id;
   String? title;
@@ -18,12 +17,12 @@ class CategoryModel {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['title'] = this.title;
-    data['stream'] = this.stream;
-    data['language'] = this.language;
-    data['created_at'] = this.createdAt;
+    final Map<String, dynamic> data = Map<String, dynamic>();
+    data['id'] = id;
+    data['title'] = title;
+    data['stream'] = stream;
+    data['language'] = language;
+    data['created_at'] = createdAt;
     return data;
   }
 }

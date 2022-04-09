@@ -32,16 +32,15 @@ class CategoryGetModel {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = Map<String, dynamic>();
-    data['id'] = this.id;
-    data['title'] = this.title;
-    data['stream'] = this.stream;
-    data['language'] = this.language;
-    data['created_at'] = this.createdAt;
-    if (this.categoryRelated != null) {
+    data['id'] = id;
+    data['title'] = title;
+    data['stream'] = stream;
+    data['language'] = language;
+    data['created_at'] = createdAt;
+    if (categoryRelated != null) {
       data['category_related'] =
-          this.categoryRelated!.map((v) => v.toJson()).toList();
+          categoryRelated!.map((v) => v.toJson()).toList();
     }
     return data;
   }
 }
-
