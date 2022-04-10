@@ -5,11 +5,12 @@ import 'package:fake_story/api/endpoints.dart';
 import 'package:fake_story/data/model/user_post_model.dart';
 import 'package:fake_story/utils/shared_prefs_ext.dart';
 import 'package:logger/logger.dart';
-import '../../data/model/user_model.dart';
+
+import '../../data/model/usermodel.dart';
 
 abstract class UserRepository {
-  Future<UserPostModel?> register(String username, String password,
-      String email, String? firstName, String? lastname);
+  Future<UserModel?> register(String username, String password, String email,
+      String? firstName, String? lastname);
   Future<UserModel> getCurrentUser(String token);
   Future<String> getAccessToken(String username, String password);
 }
@@ -25,13 +26,13 @@ class UserDaoRepository implements UserRepository {
     response = await dio.get(UserEndPoints.userGetEndpoint.endpointName);
     logger.i(response.data);
     var user = UserModel.fromJson(response.data);
-    logger.i(user.firstName);
+    logger.i(user.firstName.toString());
     return user;
   }
 
   @override
-  Future<UserPostModel?> register(String username, String password,
-      String email, String? firstName, String? lastname) async {
+  Future<UserModel?> register(String username, String password, String email,
+      String? firstName, String? lastname) async {
     var logger = Logger();
     logger.i("logine girdik");
     var dio = Dio();
@@ -52,7 +53,7 @@ class UserDaoRepository implements UserRepository {
     if (response.statusCode == 201) {
       final body = response.data;
       logger.i("body");
-      return UserPostModel(
+      return UserModel(
         username: body['username'],
         email: body['email'],
       );

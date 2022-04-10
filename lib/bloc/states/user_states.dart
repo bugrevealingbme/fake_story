@@ -1,6 +1,4 @@
-import 'package:fake_story/data/model/user_model.dart';
-
-import '../../data/model/user_post_model.dart';
+import 'package:fake_story/data/model/usermodel.dart';
 
 abstract class UserState {
   UserState();
@@ -22,7 +20,7 @@ class UserLoadedState extends UserState {
 
 class UserCreatedState extends UserState {
   ///Model
-  UserPostModel userPostModel;
+  UserModel userPostModel;
   UserCreatedState(this.userPostModel);
 }
 

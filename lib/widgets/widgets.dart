@@ -1,5 +1,11 @@
+import 'dart:io';
+import 'dart:typed_data';
+
+import 'package:fake_story/api/video_thumbnail/thumbnail.dart';
+import 'package:fake_story/data/model/postmodel.dart';
 import 'package:fake_story/screens/details_page.dart';
 import 'package:fake_story/utils/app_constans.dart';
+import 'package:fake_story/utils/string.extension.dart';
 import 'package:flutter/material.dart';
 import 'package:text_scroll/text_scroll.dart';
 
@@ -663,6 +669,9 @@ class GeneralWidgets {
   static storyVideo(
     context,
     Size size,
+    String? contentLink,
+    String? createdDay,
+    PostModel? postModel,
     viewer, {
     bool showCategory = true,
   }) {
@@ -671,106 +680,111 @@ class GeneralWidgets {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) =>
-                DetailsPage(imageUrl: 'https://picsum.photos/1950'),
+            builder: (context) => DetailsPage(imageUrl: contentLink!),
           ),
         );
       }),
-      child: SizedBox(
-        width: (size.width / 2.5),
-        child: Stack(
-          children: [
-            Positioned(
-              left: 0,
-              right: 0,
-              top: 0,
-              bottom: 0,
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.all(Radius.circular(10)),
-                    image: DecorationImage(
-                        fit: BoxFit.cover,
-                        image: NetworkImage('https://picsum.photos/850'))),
-                child: Stack(
-                  children: [
-                    /// black blur
-                    Positioned(
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            gradient: LinearGradient(
-                                begin: Alignment.bottomCenter,
-                                end: Alignment.topCenter,
-                                colors: [
-                                  Colors.black.withOpacity(0.4),
-                                  Colors.transparent
-                                ]),
-                          ),
-                          height: size.height / 10,
-                          width: size.width,
-                        )),
+      child: FutureBuilder(
+        future: GetThumbnailFromVideo.getCategory(contentLink!),
+        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return SizedBox(
+              width: (size.width / 2.5),
+              child: Stack(
+                children: [
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    top: 0,
+                    bottom: 0,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(10)),
+                        image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image: FileImage(
+                              File(snapshot.data!),
+                            )),
+                      ),
+                      width: double.infinity,
+                      child: Stack(
+                        children: [
+                          /// black blur
+                          Positioned(
+                              top: 0,
+                              left: 0,
+                              right: 0,
+                              bottom: 0,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  gradient: LinearGradient(
+                                      begin: Alignment.bottomCenter,
+                                      end: Alignment.topCenter,
+                                      colors: [
+                                        Colors.black.withOpacity(0.4),
+                                        Colors.transparent
+                                      ]),
+                                ),
+                                height: size.height / 10,
+                                width: size.width,
+                              )),
 
-                    //category
-                    showCategory
-                        ? Positioned(
-                            right: 15,
-                            top: 15,
+                          //category
+                          showCategory
+                              ? Positioned(
+                                  right: 15,
+                                  top: 15,
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 5, horizontal: 13),
+                                    decoration: BoxDecoration(
+                                        color:
+                                            const Color.fromRGBO(0, 0, 0, 0.45),
+                                        borderRadius:
+                                            BorderRadius.circular(50)),
+                                    child: Text(
+                                      "Cars",
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white),
+                                    ),
+                                  ),
+                                )
+                              : Container(),
+
+                          //time
+                          Center(
                             child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 5, horizontal: 13),
-                              decoration: BoxDecoration(
-                                  color: const Color.fromRGBO(0, 0, 0, 0.45),
-                                  borderRadius: BorderRadius.circular(50)),
-                              child: Text(
-                                "Cars",
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white),
-                              ),
-                            ),
-                          )
-                        : Container(),
-
-                    //time
-                    Positioned(
-                      left: 10,
-                      top: 10,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 5, horizontal: 6),
-                        decoration: BoxDecoration(
-                          color: Color.fromARGB(180, 255, 255, 255),
-                          borderRadius: BorderRadius.circular(50),
-                        ),
-                        child: Text(
-                          "0:15",
-                          style: TextStyle(
-                            color: Color(0xff111111),
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 5, horizontal: 6),
+                                decoration: BoxDecoration(
+                                  color: Color.fromARGB(180, 255, 255, 255),
+                                  borderRadius: BorderRadius.circular(50),
+                                ),
+                                child: const Icon(Icons.play_arrow_outlined)),
                           ),
-                        ),
+
+                          /// tags
+                          videoBottomInfo(viewer, createdDay!, postModel),
+                        ],
                       ),
                     ),
-
-                    /// tags
-                    videoBottomInfo(viewer),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
+            );
+          } else {
+            return Container();
+          }
+        },
       ),
     );
   }
 
-  static storyPhoto(Size size, viewer, {bool showCategory = true}) {
+  static storyPhoto(Size size, viewer, String? contentLink,
+      {bool showCategory = true}) {
     return SizedBox(
       width: size.width / 2,
       child: Stack(
@@ -787,7 +801,7 @@ class GeneralWidgets {
                 image: DecorationImage(
                   fit: BoxFit.cover,
                   image: NetworkImage(
-                    'https://picsum.photos/950',
+                    contentLink!,
                   ),
                 ),
               ),
@@ -825,7 +839,15 @@ class GeneralWidgets {
     );
   }
 
-  static videoBottomInfo(bool viewer) {
+  static videoBottomInfo(bool viewer, String createdDay, PostModel? postModel) {
+    DateTime now = DateTime.now();
+    DateTime date = DateTime(now.year, now.month, now.day);
+    //print(date);
+    var postTime = DateTime.parse(createdDay);
+    print(postTime);
+    print(now);
+    var differenceTime = now.difference(postTime).inMinutes;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Column(
@@ -833,11 +855,17 @@ class GeneralWidgets {
           const Spacer(),
           Row(
             children: [
-              Text(
-                '1d ago',
-                style: TextStyle(
-                    fontSize: viewer ? 15 : 14, color: Colors.white54),
-              ),
+              differenceTime > 180
+                  ? Text(
+                      "Long time ago...",
+                      style: TextStyle(
+                          fontSize: viewer ? 10 : 9, color: Colors.white54),
+                    )
+                  : Text(
+                      differenceTime.toString() + " minutes ago",
+                      style: TextStyle(
+                          fontSize: viewer ? 10 : 9, color: Colors.white54),
+                    ),
               const Spacer(),
               viewer
                   ? Row(
@@ -849,7 +877,7 @@ class GeneralWidgets {
                         ),
                         const SizedBox(width: 3),
                         Text(
-                          '1.3K',
+                          postModel!.like!.length.toString(),
                           style: TextStyle(fontSize: 14, color: Colors.white54),
                         ),
                       ],

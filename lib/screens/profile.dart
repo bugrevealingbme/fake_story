@@ -201,7 +201,7 @@ class _ProfilePageState extends State<ProfilePage>
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               Text(
-                                state.userData.userRelated!.length.toString(),
+                                "state.userData.profileRelate!.length.toString()",
                                 style: TextStyle(
                                     fontSize: 17, fontWeight: FontWeight.bold),
                               ),
@@ -222,7 +222,7 @@ class _ProfilePageState extends State<ProfilePage>
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               Text(
-                                state.userData.followers!.length.toString(),
+                                " state.userData.followers!.length.toString()",
                                 style: TextStyle(
                                   fontSize: 17,
                                   fontWeight: FontWeight.bold,
@@ -245,7 +245,7 @@ class _ProfilePageState extends State<ProfilePage>
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               Text(
-                                state.userData.following!.length.toString(),
+                                "  state.userData.following!.length.toString()",
                                 style: TextStyle(
                                     fontSize: 17, fontWeight: FontWeight.bold),
                               ),
@@ -388,13 +388,17 @@ class _ProfilePageState extends State<ProfilePage>
                     crossAxisSpacing: 10,
                     mainAxisSpacing: 10,
                     children: <Widget>[
-                      GeneralWidgets.storyVideo(context, size, viewer,
+                      GeneralWidgets.storyVideo(
+                          context, size, null, null, null, viewer,
                           showCategory: false),
-                      GeneralWidgets.storyVideo(context, size, viewer,
+                      GeneralWidgets.storyVideo(
+                          context, size, null, null, null, viewer,
                           showCategory: false),
-                      GeneralWidgets.storyVideo(context, size, viewer,
+                      GeneralWidgets.storyVideo(
+                          context, size, null, null, null, viewer,
                           showCategory: false),
-                      GeneralWidgets.storyVideo(context, size, viewer,
+                      GeneralWidgets.storyVideo(
+                          context, size, null, null, null, viewer,
                           showCategory: false),
                     ],
                   ),

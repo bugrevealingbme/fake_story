@@ -1,0 +1,21 @@
+// Japanese Translations
+const Map<String, String> jaJP = {
+  'home': '今日は!',
+  'premium': 'Premium',
+  'upload': 'Upload',
+  'tools': 'Tools',
+  'profile': 'Profile',
+  'videos': 'Videolar',
+  'photos': 'Fotoğraflar',
+  'search_hint': 'Arama',
+  'following': 'Takip Ettiklerim',
+  'popular': 'Popüler',
+  'categories': 'Kategoriler',
+  'all': 'Hepsi',
+  'cancel': 'Vazgeç',
+  'follow_people': 'Takip Et',
+  'unfollow_people': 'Takipten Çık',
+  'like': 'Beğen',
+  'block_people': 'Engelle',
+  'unblock_people': 'Engeli Kaldır',
+};

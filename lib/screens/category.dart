@@ -94,13 +94,17 @@ class _CategoryPageState extends State<CategoryPage> {
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10,
                 children: <Widget>[
-                  GeneralWidgets.storyVideo(context, size, true,
+                  GeneralWidgets.storyVideo(
+                      context, size, null, null, null, true,
                       showCategory: false),
-                  GeneralWidgets.storyVideo(context, size, true,
+                  GeneralWidgets.storyVideo(
+                      context, size, null, null, null, true,
                       showCategory: false),
-                  GeneralWidgets.storyVideo(context, size, true,
+                  GeneralWidgets.storyVideo(
+                      context, size, null, null, null, true,
                       showCategory: false),
-                  GeneralWidgets.storyVideo(context, size, true,
+                  GeneralWidgets.storyVideo(
+                      context, size, null, null, null, true,
                       showCategory: false),
                 ],
               ),

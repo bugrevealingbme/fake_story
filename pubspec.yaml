@@ -58,6 +58,10 @@ dependencies:
   #image_picker
   image_picker: ^0.8.5
   file_picker: ^4.5.1
+  #localization
+  easy_localization: ^3.0.0
+  #video_thumbnail
+  video_thumbnail: ^0.5.0
 
 dev_dependencies:
   flutter_test:

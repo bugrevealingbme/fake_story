@@ -1,6 +1,9 @@
 import 'package:fake_story/utils/app_constans.dart';
 import 'package:fake_story/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:fake_story/utils/shared_prefs_ext.dart';
+
+import '../languages.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({Key? key}) : super(key: key);
@@ -13,6 +16,7 @@ class _SearchPageState extends State<SearchPage>
     with SingleTickerProviderStateMixin {
   bool viewer = false;
   late TabController _tabController;
+  String suffixText = "EN";
 
   @override
   void initState() {
@@ -44,6 +48,7 @@ class _SearchPageState extends State<SearchPage>
                 children: [
                   Expanded(
                     child: TextFormField(
+                      autofocus: true,
                       decoration: InputDecoration(
                         hintText: "Search",
                         hintStyle: const TextStyle(
@@ -62,9 +67,22 @@ class _SearchPageState extends State<SearchPage>
                         ),
                         filled: true,
                         fillColor: Theme.of(context).cardColor,
-                        prefixIcon: const Icon(
+                        prefixIcon: Icon(
                           Icons.search,
                           color: Color(0xff8f8f8f),
+                        ),
+                        suffixText: suffixText,
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            Icons.arrow_drop_down,
+                            color: Color(0xff8f8f8f),
+                          ),
+                          onPressed: () {
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) =>
+                                    _buildPopupDialog(context));
+                          },
                         ),
                       ),
                       onChanged: (val) {},
@@ -157,13 +175,17 @@ class _SearchPageState extends State<SearchPage>
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10,
                 children: <Widget>[
-                  GeneralWidgets.storyVideo(context, size, viewer,
+                  GeneralWidgets.storyVideo(
+                      context, size, "asdsa", null, null, viewer,
                       showCategory: false),
-                  GeneralWidgets.storyVideo(context, size, viewer,
+                  GeneralWidgets.storyVideo(
+                      context, size, "asdsa", null, null, viewer,
                       showCategory: false),
-                  GeneralWidgets.storyVideo(context, size, viewer,
+                  GeneralWidgets.storyVideo(
+                      context, size, "asdsa", null, null, viewer,
                       showCategory: false),
-                  GeneralWidgets.storyVideo(context, size, viewer,
+                  GeneralWidgets.storyVideo(
+                      context, size, "asdsa", null, null, viewer,
                       showCategory: false),
                 ],
               ),
@@ -173,4 +195,70 @@ class _SearchPageState extends State<SearchPage>
       ),
     );
   }
+}
+
+Widget _buildPopupDialog(BuildContext context) {
+  final List<String> _languages = [
+    'English',
+    'Espanol',
+    'Turkish',
+    'Portogues'
+  ];
+  return AlertDialog(
+    title: const Text('Choose Your Language'),
+    content: Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        SizedBox(
+          width: 200,
+          height: 200,
+          child: ListView.builder(
+              itemCount: LocalizationService.langs.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: TextButton(
+                    onPressed: () {
+                      switch (LocalizationService.langs[index].toString()) {
+                        case "English":
+                          CustomSharedPref.writeStringDataToSharedPref(
+                              "languageData", "en_us");
+
+                          Navigator.of(context).pop();
+                          break;
+                        case "Türkçe":
+                          CustomSharedPref.writeStringDataToSharedPref(
+                              "languageData", "tr_TR");
+                          Navigator.of(context).pop();
+                          break;
+                        case "日本語":
+                          // LocalizationService().changeLocale("日本語");
+                          CustomSharedPref.writeStringDataToSharedPref(
+                              "languageData", "ja_JP");
+                          Navigator.of(context).pop();
+                          break;
+                        default:
+                      }
+
+                      print(LocalizationService.langs[index].toString());
+                    },
+                    child: Text(
+                      LocalizationService.langs[index],
+                    ),
+                  ),
+                );
+              }),
+        )
+      ],
+    ),
+    actions: <Widget>[
+      FlatButton(
+        onPressed: () {
+          Navigator.of(context).pop();
+        },
+        textColor: Theme.of(context).primaryColor,
+        child: const Text('Close'),
+      ),
+    ],
+  );
 }

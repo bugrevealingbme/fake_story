@@ -1,0 +1,21 @@
+// Turkish Translations
+const Map<String, String> trTR = {
+  'home': 'Ana Sayfa',
+  'premium': 'Premium',
+  'upload': 'Yükle',
+  'tools': 'Araçlar',
+  'profile': 'Profil',
+  'videos': 'Videolar',
+  'photos': 'Fotoğraflar',
+  'search_hint': 'Arama',
+  'following': 'Takip Ettiklerim',
+  'popular': 'Popüler',
+  'categories': 'Kategoriler',
+  'all': 'Hepsi',
+  'cancel': 'Vazgeç',
+  'follow_people': 'Takip Et',
+  'unfollow_people': 'Takipten Çık',
+  'like': 'Beğen',
+  'block_people': 'Engelle',
+  'unblock_people': 'Engeli Kaldır',
+};

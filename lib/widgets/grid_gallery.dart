@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:fake_story/api/api_calls/upload_page_calls.dart';
 import 'package:fake_story/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -9,7 +10,7 @@ import 'package:photo_manager/photo_manager.dart';
 class GridGallery extends StatefulWidget {
   final ScrollController? scrollCtr;
 
-  GridGallery({
+  const GridGallery({
     Key? key,
     this.scrollCtr,
   }) : super(key: key);
@@ -64,6 +65,18 @@ class _GridGalleryState extends State<GridGallery>
               if (snapshot.connectionState == ConnectionState.done) {
                 return InkWell(
                   onTap: () {
+                    asset.file.then((value) => {
+                          if (asset.type == AssetType.video)
+                            {
+                              UploadPageCalls.createPost(
+                                  value!.path, "testtt", "tr_TR", true)
+                            }
+                          else
+                            {
+                              UploadPageCalls.createPost(
+                                  value!.path, "testtt", "tr_TR", false)
+                            }
+                        });
                     /*  setState(() {
                       Navigator.of(context).pop();
                       pickedFile = asset.file;
@@ -192,6 +205,7 @@ Future<void> gallerySheet(BuildContext context) {
                               return;
                             }
                             final image = File(picked.path);
+                            print(image);
 
                             /*  setState(() {
                                   pickedimage = image;

@@ -60,21 +60,21 @@ class DetailPageCalls {
 
     return postlist;
   }
-  static Future<bool> createCategory(String title,String language) async {
+
+  static Future<bool> createCategory(String title, String language) async {
     var dio = Dio();
     Response response;
-    response = await dio.post(BASEURL + "app/category/", data:{"title":title,"language":language});
+    response = await dio.post(BASEURL + "app/category/",
+        data: {"title": title, "language": language});
 
     print('Response status: ${response.statusCode}');
     print('Response body: ${response.data}');
-   if (response.statusCode==201) {
-     return true;
-     
-   } else {
-     return false;
-   }
+    if (response.statusCode == 201) {
+      return true;
+    } else {
+      return false;
+    }
   }
-
 
   static Future<List<PostModel>?> getPostList(
       String language, Bool isVideo) async {
@@ -104,67 +104,6 @@ class DetailPageCalls {
     print('Response body: ${response.data}');
     var post = PostModel.fromJson(response.data);
     return post;
-  }
-
-  static Future<List<CategoryModel>> getListCategory(String language) async {
-    var dio = Dio();
-    Response response;
-    response = await dio.get(
-        BASEURL + 'app/category/?ordering=-stream' + "&language=" + language);
-
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.data}');
-
-    List<CategoryModel> result = [];
-    for (var item in response.data) {
-      var category = CategoryModel.fromJson(item);
-      result.add(category);
-    }
-    return result;
-  }
-
-  static Future<List<PostModel>?> getSearchPostList(
-      String searchtxt, Bool isVideo, String ordering, String language) async {
-    // ordering kullanımı -like like stream -stream created_at -created_at
-    var dio = Dio();
-    Response response;
-    response = await dio.get(BASEURL +
-        "app/post/?search=" +
-        searchtxt +
-        "&isVideo=" +
-        isVideo.toString() +
-        "&ordering=" +
-        ordering +
-        "&language=" +
-        language);
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.data}');
-    List<PostModel> result = [];
-    for (var item in response.data) {
-      var post = PostModel.fromJson(item);
-      result.add(post);
-    }
-    return result;
-  }
-  static Future<List<PostModel>?> getFollowUserPostList() async {
-    // Takip ettiğin kullanıcılların postlarını gosterme 
-
-     // shared pref ten token cekilecek burada
-    var token =
-        "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjo1MjQ5NDYwOTY1LCJpYXQiOjE2NDk0NjA5NjUsImp0aSI6ImNkYTllZTA3ZDQxYjRiNzc4YzI3YzY1N2Q3MjY0YzcwIiwidXNlcl9pZCI6OH0.NJnUXmslXZ3PklaK7GZg7h0GrGP8RpImhvFSXrFN_jo";
-    var dio = Dio();
-    Response response;
-    dio.options.headers["Authorization"] = 'Bearer $token';
-    
-    response = await dio.get(BASEURL +"app/followingpost" );
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.data}');
-    List<PostModel> result = [];
-    for (var item in response.data) {
-      var post = PostModel.fromJson(item);
-      result.add(post);
-    }
-    return result;
   }
 
   static Future<List<UserModel>?> getSearchUserList(
@@ -342,37 +281,16 @@ class DetailPageCalls {
     var dio = Dio();
     Response response;
     dio.options.headers["Authorization"] = 'Bearer $token';
-    var formData = FormData.fromMap({'file': await MultipartFile.fromFile('./text.txt', filename: 'upload.txt')
+    var formData = FormData.fromMap({
+      'file': await MultipartFile.fromFile('./text.txt', filename: 'upload.txt')
     });
-    response = await dio.put(BASEURL + "user/me/",data:formData);
+    response = await dio.put(BASEURL + "user/me/", data: formData);
     print('Response status: ${response.statusCode}');
     print('Response body: ${response.data}');
     var user = ProfileRelate.fromJson(response.data);
     return user;
   }
-  static Future<bool> createPost(String filepath,String title,String language,Bool isVideo) async {
-    // shared pref ten token cekilecek burada
-    //File alınacak yada path burada yükleme işlemi olacak profile photo
-    var token =
-        "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjo1MjQ5NDYwOTY1LCJpYXQiOjE2NDk0NjA5NjUsImp0aSI6ImNkYTllZTA3ZDQxYjRiNzc4YzI3YzY1N2Q3MjY0YzcwIiwidXNlcl9pZCI6OH0.NJnUXmslXZ3PklaK7GZg7h0GrGP8RpImhvFSXrFN_jo";
-    var dio = Dio();
-    Response response;
-    dio.options.headers["Authorization"] = 'Bearer $token';
-    var formData = FormData.fromMap({
-      "title":title,
-      "isVideo":isVideo,
-      "language":language,
-      'file': await MultipartFile.fromFile('./text.txt', filename: 'upload.txt')
-    });
-    response = await dio.put(BASEURL + "user/me/",data:formData);
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.data}');
-   if (response.statusCode==201) {
-     return true;
-   } else {
-     return false;
-   }
-  }
+
   static Future<bool> deletePost(int postid) async {
     // shared pref ten token cekilecek burada
     //File alınacak yada path burada yükleme işlemi olacak profile photo
@@ -381,14 +299,14 @@ class DetailPageCalls {
     var dio = Dio();
     Response response;
     dio.options.headers["Authorization"] = 'Bearer $token';
-   
-    response = await dio.delete(BASEURL + "app/post/"+postid.toString());
+
+    response = await dio.delete(BASEURL + "app/post/" + postid.toString());
     print('Response status: ${response.statusCode}');
     print('Response body: ${response.data}');
-   if (response.statusCode==204) {
-     return true;
-   } else {
-     return false;
-   }
+    if (response.statusCode == 204) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }

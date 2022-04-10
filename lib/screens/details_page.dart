@@ -195,6 +195,9 @@ class _DetailsPageState extends State<DetailsPage> {
                           child: GeneralWidgets.storyVideo(
                             context,
                             size,
+                            null,
+                            null,
+                            null,
                             viewer,
                             showCategory: false,
                           ),

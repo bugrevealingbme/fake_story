@@ -1,18 +1,25 @@
 import 'dart:math';
 
+import 'package:fake_story/api/api_calls/home_calls.dart';
+import 'package:fake_story/data/model/postmodel.dart';
 import 'package:fake_story/screens/allCategories.dart';
 import 'package:fake_story/screens/category.dart';
 import 'package:fake_story/screens/profile.dart';
 import 'package:fake_story/screens/search_page.dart';
 import 'package:fake_story/utils/app_constans.dart';
+import 'package:fake_story/utils/shared_prefs_ext.dart';
 import 'package:fake_story/widgets/grid_gallery.dart';
 import 'package:fake_story/widgets/navbar.dart';
 import 'package:fake_story/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_connect/http/src/utils/utils.dart';
+import 'package:logger/logger.dart';
+
+import '../bloc/getx/getx_controller.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
-
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
@@ -23,14 +30,15 @@ class _MyHomePageState extends State<MyHomePage>
 
   @override
   void initState() {
+    final Controller controller = Get.put(Controller());
     _tabController = TabController(vsync: this, initialIndex: 0, length: 2);
-
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     int _selectedIndex = 0;
+
     return Scaffold(
         backgroundColor: Constants.primaryColor,
         bottomNavigationBar: CustomBottomNavigationBar(
@@ -113,17 +121,17 @@ class _MyHomePageState extends State<MyHomePage>
                               horizontal: 0, vertical: 4),
                           labelColor: Colors.black,
                           labelStyle: const TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.w600),
+                              fontSize: 10, fontWeight: FontWeight.w600),
                           unselectedLabelColor: Colors.grey,
                           unselectedLabelStyle: const TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.w400),
+                              fontSize: 10, fontWeight: FontWeight.w400),
                           isScrollable: true,
                           tabs: <Widget>[
-                            const Tab(
-                              text: "Videos",
+                            Tab(
+                              text: "videos".tr,
                             ),
-                            const Tab(
-                              text: "Photos",
+                            Tab(
+                              text: "photos".tr,
                             ),
                           ],
                         ),
@@ -184,7 +192,14 @@ class HomeVideosView extends StatefulWidget {
 
 class _HomeVideosViewState extends State<HomeVideosView>
     with AutomaticKeepAliveClientMixin {
-  categoryWithVideos(Size size, String category) {
+  final Controller controller = Get.put(Controller());
+  List<PostModel>? postList;
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  categoryWithVideos(Size size, String category, String createdDay) {
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
       child: Column(
@@ -204,8 +219,15 @@ class _HomeVideosViewState extends State<HomeVideosView>
                 physics: const ScrollPhysics(),
                 primary: false,
                 itemBuilder: (context, index) {
-                  return GeneralWidgets.storyVideo(context, size, true,
-                      showCategory: false);
+                  return GeneralWidgets.storyVideo(
+                    context,
+                    size,
+                    null,
+                    createdDay,
+                    null,
+                    true,
+                    showCategory: false,
+                  );
                 },
               ),
             ),
@@ -252,6 +274,7 @@ class _HomeVideosViewState extends State<HomeVideosView>
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
+    final Controller controller = Get.put(Controller());
 
     return SingleChildScrollView(
       child: Padding(
@@ -269,67 +292,84 @@ class _HomeVideosViewState extends State<HomeVideosView>
                     bottom: BorderSide(color: Colors.grey.shade200, width: 3),
                   )),
                 ),
-                DefaultTabController(
-                  length: 9,
-                  child: Theme(
-                    //delete hover effect
-                    data: ThemeData(
-                      highlightColor: Colors.transparent,
-                      splashColor: Colors.transparent,
-                    ),
-                    child: TabBar(
-                      labelPadding: const EdgeInsets.only(left: 5, right: 5),
-                      indicatorWeight: 0,
-                      indicator: UnderlineTabIndicator(
-                        borderSide: BorderSide(
-                            width: 3.0,
-                            color: Theme.of(context).colorScheme.secondary),
-                        insets: const EdgeInsets.symmetric(
-                          horizontal: 10.0,
-                        ),
+                FutureBuilder(
+                  future: HomeCall.getListCategory(Get.deviceLocale.toString()),
+                  builder:
+                      (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                    List<Widget> categoryList = [
+                      const Tab(
+                        text: "Popular",
                       ),
-                      padding: const EdgeInsets.all(0),
-                      indicatorPadding: const EdgeInsets.symmetric(
-                          horizontal: 0, vertical: 0),
-                      labelColor: Colors.black,
-                      labelStyle: const TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.w500),
-                      unselectedLabelColor:
-                          const Color.fromARGB(255, 139, 139, 139),
-                      unselectedLabelStyle: const TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.w500),
-                      isScrollable: true,
-                      tabs: [
-                        const Tab(
-                          text: "Popular",
+                      const Tab(text: "Following")
+                    ];
+                    if (snapshot.data != null) {
+                      for (var item in snapshot.data) {
+                        var tabs = Tab(text: item.title);
+                        categoryList.add(tabs);
+                      }
+                    }
+
+                    return DefaultTabController(
+                      length: categoryList.length,
+                      child: Theme(
+                        //delete hover effect
+                        data: ThemeData(
+                          highlightColor: Colors.transparent,
+                          splashColor: Colors.transparent,
                         ),
-                        const Tab(
-                          text: "New",
-                        ),
-                        const Tab(
-                          text: "Following",
-                        ),
-                        const Tab(
-                          text: "Cars",
-                        ),
-                        const Tab(
-                          text: "Girls",
-                        ),
-                        const Tab(
-                          text: "Holiday",
-                        ),
-                        const Tab(
-                          text: "Travel",
-                        ),
-                        const Tab(
-                          text: "Cars",
-                        ),
-                        const Tab(
-                          text: "Cars",
-                        ),
-                      ],
-                    ),
-                  ),
+                        child: TabBar(
+                            onTap: (value) => {
+                                  if (value == 0)
+                                    {
+                                      print("index 0 veya 1"),
+                                      HomeCall.getSearchPostList(
+                                              "", true, "like", "tr_TR")
+                                          .then((item) => controller
+                                              .addPostVideoList(item!))
+                                    }
+                                  else if (value == 1)
+                                    {
+                                      HomeCall.getFollowUserPostList(true).then(
+                                          (value) => controller
+                                              .addPostVideoList(value!))
+                                    }
+                                  else
+                                    {
+                                      HomeCall.getCategory(
+                                              snapshot.data[value - 2].id
+                                                  .toString(),
+                                              true)
+                                          .then((item) => controller
+                                              .addPostVideoList(item!))
+                                    }
+                                },
+                            labelPadding:
+                                const EdgeInsets.only(left: 5, right: 5),
+                            indicatorWeight: 0,
+                            indicator: UnderlineTabIndicator(
+                              borderSide: BorderSide(
+                                  width: 3.0,
+                                  color:
+                                      Theme.of(context).colorScheme.secondary),
+                              insets: const EdgeInsets.symmetric(
+                                horizontal: 10.0,
+                              ),
+                            ),
+                            padding: const EdgeInsets.all(0),
+                            indicatorPadding: const EdgeInsets.symmetric(
+                                horizontal: 0, vertical: 0),
+                            labelColor: Colors.black,
+                            labelStyle: const TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w500),
+                            unselectedLabelColor:
+                                const Color.fromARGB(255, 139, 139, 139),
+                            unselectedLabelStyle: const TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w500),
+                            isScrollable: true,
+                            tabs: categoryList),
+                      ),
+                    );
+                  },
                 ),
               ],
             ),
@@ -358,19 +398,41 @@ class _HomeVideosViewState extends State<HomeVideosView>
               ],
             ),
             const SizedBox(height: 20),
-            GridView.builder(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: viewer ? 2 : 3,
-                childAspectRatio: 0.571,
-                crossAxisSpacing: Constants.gridSpacing,
-                mainAxisSpacing: Constants.gridSpacing,
-              ),
-              shrinkWrap: true,
-              primary: false,
-              itemCount: 12,
-              itemBuilder: (BuildContext context, int index) {
-                return GeneralWidgets.storyVideo(context, size, viewer,
-                    showCategory: false);
+            FutureBuilder(
+              future: HomeCall.getSearchPostList("", true, "like", "tr_TR")
+                  .then((value) => {
+                        controller.addPostVideoList(value!),
+                      }),
+              builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                if (controller.postVideoList.isNotEmpty) {
+                  var logger = Logger();
+                  logger.i(" data dolu video");
+                  return Obx(() => GridView.builder(
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: viewer ? 2 : 3,
+                          childAspectRatio: 0.571,
+                          crossAxisSpacing: Constants.gridSpacing,
+                          mainAxisSpacing: Constants.gridSpacing,
+                        ),
+                        shrinkWrap: true,
+                        primary: false,
+                        itemCount: controller.postVideoList.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return GeneralWidgets.storyVideo(
+                              context,
+                              size,
+                              controller.postVideoList[index].link,
+                              controller.postVideoList[index].createdAt,
+                              controller.postVideoList[index],
+                              viewer,
+                              showCategory: false);
+                        },
+                      ));
+                } else {
+                  var logger = Logger();
+                  logger.i(" data bos video");
+                  return Container();
+                }
               },
             ),
             const SizedBox(height: 10),
@@ -393,19 +455,43 @@ class HomePhotosView extends StatefulWidget {
 
 class _HomePhotosViewState extends State<HomePhotosView>
     with AutomaticKeepAliveClientMixin {
+  @override
+  void initState() {
+    super.initState();
+  }
+
   photoBuble(Size size, String category, viewer) {
-    return GridView.builder(
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: viewer ? 2 : 3,
-        childAspectRatio: 0.571,
-        crossAxisSpacing: Constants.gridSpacing,
-        mainAxisSpacing: Constants.gridSpacing,
-      ),
-      shrinkWrap: true,
-      primary: false,
-      itemCount: 12,
-      itemBuilder: (BuildContext context, int index) {
-        return GeneralWidgets.storyPhoto(size, viewer, showCategory: true);
+    final Controller controller = Get.put(Controller());
+    return FutureBuilder(
+      future: HomeCall.getSearchPostList("", false, "like", "tr_TR")
+          .then((value) => {controller.addPostList(value!)}),
+      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+        if (controller.postList.isNotEmpty) {
+          var logger = Logger();
+          logger.i(" data dolu");
+
+          return Obx(() => GridView.builder(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: viewer ? 2 : 3,
+                  childAspectRatio: 0.571,
+                  crossAxisSpacing: Constants.gridSpacing,
+                  mainAxisSpacing: Constants.gridSpacing,
+                ),
+                shrinkWrap: true,
+                primary: false,
+                itemCount: controller.postList.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return GeneralWidgets.storyPhoto(
+                      size, viewer, controller.postList[index].link,
+                      showCategory: false);
+                },
+              ));
+        } else {
+          var logger = Logger();
+          logger.i("empty data postlar");
+
+          return Container();
+        }
       },
     );
   }
@@ -447,6 +533,7 @@ class _HomePhotosViewState extends State<HomePhotosView>
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
+    final Controller controller = Get.put(Controller());
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
@@ -463,61 +550,84 @@ class _HomePhotosViewState extends State<HomePhotosView>
                     bottom: BorderSide(color: Colors.grey.shade200, width: 3),
                   )),
                 ),
-                DefaultTabController(
-                  length: 7,
-                  child: Theme(
-                    //delete hover effect
-                    data: ThemeData(
-                      highlightColor: Colors.transparent,
-                      splashColor: Colors.transparent,
-                    ),
-                    child: TabBar(
-                      labelPadding: const EdgeInsets.only(left: 5, right: 5),
-                      indicatorWeight: 0,
-                      indicator: UnderlineTabIndicator(
-                        borderSide: BorderSide(
-                            width: 3.0,
-                            color: Theme.of(context).colorScheme.secondary),
-                        insets: const EdgeInsets.symmetric(
-                          horizontal: 10.0,
-                        ),
+                FutureBuilder(
+                  future: HomeCall.getListCategory("tr_TR"),
+                  builder:
+                      (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                    List<Widget> list = [
+                      const Tab(
+                        text: "Popular",
                       ),
-                      padding: const EdgeInsets.all(0),
-                      indicatorPadding: const EdgeInsets.symmetric(
-                          horizontal: 0, vertical: 0),
-                      labelColor: Colors.black,
-                      labelStyle: const TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.w500),
-                      unselectedLabelColor:
-                          const Color.fromARGB(255, 139, 139, 139),
-                      unselectedLabelStyle: const TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.w500),
-                      isScrollable: true,
-                      tabs: const [
-                        Tab(
-                          text: "Popular",
+                      const Tab(text: "Following")
+                    ];
+                    if (snapshot.data != null) {
+                      for (var item in snapshot.data) {
+                        var tabList = Tab(text: item.title);
+                        list.add(tabList);
+                      }
+                    }
+
+                    return DefaultTabController(
+                      length: list.length,
+                      child: Theme(
+                        //delete hover effect
+                        data: ThemeData(
+                          highlightColor: Colors.transparent,
+                          splashColor: Colors.transparent,
                         ),
-                        Tab(
-                          text: "Cars",
-                        ),
-                        Tab(
-                          text: "Girls",
-                        ),
-                        Tab(
-                          text: "Holiday",
-                        ),
-                        Tab(
-                          text: "Travel",
-                        ),
-                        Tab(
-                          text: "Cars",
-                        ),
-                        Tab(
-                          text: "Cars",
-                        ),
-                      ],
-                    ),
-                  ),
+                        child: TabBar(
+                            onTap: (value) => {
+                                  if (value == 0)
+                                    {
+                                      print("index 0 veya 1"),
+                                      HomeCall.getSearchPostList(
+                                              "", false, "like", "tr_TR")
+                                          .then((item) =>
+                                              controller.addPostList(item!))
+                                    }
+                                  else if (value == 1)
+                                    {
+                                      HomeCall.getFollowUserPostList(false)
+                                          .then((value) =>
+                                              controller.addPostList(value!))
+                                    }
+                                  else
+                                    {
+                                      HomeCall.getCategory(
+                                              snapshot.data[value - 2].id
+                                                  .toString(),
+                                              false)
+                                          .then((item) =>
+                                              controller.addPostList(item!))
+                                    }
+                                },
+                            labelPadding:
+                                const EdgeInsets.only(left: 5, right: 5),
+                            indicatorWeight: 0,
+                            indicator: UnderlineTabIndicator(
+                              borderSide: BorderSide(
+                                  width: 3.0,
+                                  color:
+                                      Theme.of(context).colorScheme.secondary),
+                              insets: const EdgeInsets.symmetric(
+                                horizontal: 10.0,
+                              ),
+                            ),
+                            padding: const EdgeInsets.all(0),
+                            indicatorPadding: const EdgeInsets.symmetric(
+                                horizontal: 0, vertical: 0),
+                            labelColor: Colors.black,
+                            labelStyle: const TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w500),
+                            unselectedLabelColor:
+                                const Color.fromARGB(255, 139, 139, 139),
+                            unselectedLabelStyle: const TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w500),
+                            isScrollable: true,
+                            tabs: list),
+                      ),
+                    );
+                  },
                 ),
               ],
             ),
