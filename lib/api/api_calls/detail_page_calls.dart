@@ -6,10 +6,11 @@ import 'package:fake_story/data/model/categoryGetModel.dart';
 import 'package:fake_story/data/model/categorymodel.dart';
 import 'package:fake_story/data/model/postmodel.dart';
 import 'package:fake_story/data/model/user_model.dart';
+import 'package:fake_story/utils/shared_prefs_ext.dart';
 import 'package:logger/logger.dart';
 
 class DetailPageCalls {
-  static String BASEURL = "http://192.168.0.15:8000/";
+  static String BASEURL = "http://185.174.61.27:8000/";
 
   static Future<void> followUser(String userId, String? token) async {
     var logger = Logger();
@@ -152,37 +153,6 @@ class DetailPageCalls {
     } else {
       return false;
     }
-  }
-
-  static Future<bool> userLogin(String username, String password) async {
-    // ordering kullanımı -like like stream -stream created_at -created_at
-    var dio = Dio();
-    Response response;
-    response = await dio.post(BASEURL + "user/register/",
-        data: {"username": username, "password": password});
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.data}');
-    if (response.statusCode == 200) {
-      // Shared pref yazılacak access token
-      return true;
-    } else {
-      // login başarısız
-      return false;
-    }
-  }
-
-  static Future<UserModel> userInformations() async {
-    // shared pref ten token cekilecek burada
-    var token =
-        "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjo1MjQ5NDYwOTY1LCJpYXQiOjE2NDk0NjA5NjUsImp0aSI6ImNkYTllZTA3ZDQxYjRiNzc4YzI3YzY1N2Q3MjY0YzcwIiwidXNlcl9pZCI6OH0.NJnUXmslXZ3PklaK7GZg7h0GrGP8RpImhvFSXrFN_jo";
-    var dio = Dio();
-    Response response;
-    dio.options.headers["Authorization"] = 'Bearer $token';
-    response = await dio.get(BASEURL + "user/me/");
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.data}');
-    var user = UserModel.fromJson(response.data);
-    return user;
   }
 
   static Future<ProfileRelate> userProfileUpdate(dynamic data) async {

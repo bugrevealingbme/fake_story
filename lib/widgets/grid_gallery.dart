@@ -5,6 +5,8 @@ import 'package:fake_story/api/api_calls/upload_page_calls.dart';
 import 'package:fake_story/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_manager/photo_manager.dart';
 
 class GridGallery extends StatefulWidget {
@@ -40,10 +42,46 @@ class _GridGalleryState extends State<GridGallery>
     }
   }
 
+  Future<bool> _checkPermission() async {
+    final status = await Permission.storage.status;
+    if (status != PermissionStatus.granted) {
+      final result = await Permission.storage.request();
+      if (result == PermissionStatus.granted) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return true;
+    }
+  }
+
+  // _files() async {
+  //   var storagePermission = await _checkPermission();
+  //   if (storagePermission) {
+  //     if (Platform.isAndroid) {
+  //       //var root = await AndroidPathProvider.moviesPath;
+  //       var root2 = await getExternalStorageDirectory();
+  //       //var files = await FileManager(root: root2).dirsTree();
+  //       return files;
+  //       // var savedDir = Directory(root + Platform.pathSeparator + 'animeson');
+  //       // var files = await FileManager(root: savedDir).dirsTree();
+  //       // return files;
+  //     } else {
+  //       //TO DO
+  //     }
+  //   } else {
+  //     return [];
+  //   }
+  // }
+
   _fetchNewMedia() async {
+    // var file = _files();
     lastPage = currentPage;
-    var result = await PhotoManager.requestPermission();
-    if (result) {
+    var result = await PhotoManager.requestPermissionExtend();
+    //var res = await Permission.manageExternalStorage.request();
+
+    if (result == PermissionState.authorized) {
       // success
 
       //load the album list

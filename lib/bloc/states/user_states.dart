@@ -1,4 +1,5 @@
 import 'package:fake_story/data/model/usermodel.dart';
+import 'package:logger/logger.dart';
 
 abstract class UserState {
   UserState();
@@ -20,6 +21,7 @@ class UserLoadedState extends UserState {
 
 class UserCreatedState extends UserState {
   ///Model
+
   UserModel userPostModel;
   UserCreatedState(this.userPostModel);
 }

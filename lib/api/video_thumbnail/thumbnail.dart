@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'package:video_thumbnail/video_thumbnail.dart';
 
 class GetThumbnailFromVideo {
-  static Future<String> getCategory(String link) async {
+  static Future<String> getLink(String link) async {
     final fileName = await VideoThumbnail.thumbnailFile(
       video: link,
       imageFormat: ImageFormat.WEBP,

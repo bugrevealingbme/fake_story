@@ -1,14 +1,21 @@
 import 'dart:io';
-import 'dart:typed_data';
 
+import 'package:fake_story/api/api_calls/profil_page_calls.dart';
 import 'package:fake_story/api/video_thumbnail/thumbnail.dart';
+import 'package:fake_story/bloc/cubit/user_cubit.dart';
+import 'package:fake_story/bloc/states/user_states.dart';
 import 'package:fake_story/data/model/postmodel.dart';
 import 'package:fake_story/screens/details_page.dart';
 import 'package:fake_story/utils/app_constans.dart';
-import 'package:fake_story/utils/string.extension.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:get/get.dart';
+import 'package:logger/logger.dart';
 import 'package:text_scroll/text_scroll.dart';
+import '../bloc/getx/getx_controller.dart';
 
+// ignore: prefer_const_constructors
 class GeneralWidgets {
   static showModalBottom(context, Widget widget) {
     showModalBottomSheet<void>(
@@ -36,6 +43,11 @@ class GeneralWidgets {
   }
 
   static SingleChildScrollView loginLogin(BuildContext context) {
+    final Controller controller = Get.put(Controller());
+    final myController = TextEditingController();
+    final myPassController = TextEditingController();
+    final myUserNameController = TextEditingController();
+
     return SingleChildScrollView(
       child: Center(
         child: Column(
@@ -57,7 +69,7 @@ class GeneralWidgets {
                     onTap: () {
                       Navigator.pop(context);
                     },
-                    child: Text(
+                    child: const Text(
                       "Later",
                       style: TextStyle(
                           color: Colors.grey,
@@ -73,13 +85,14 @@ class GeneralWidgets {
               child: Column(
                 children: [
                   const SizedBox(height: 20),
-                  Text(
+                  const Text(
                     "Sign in to your account",
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 20),
-                  GeneralWidgets()._emailPasswordWidget('login'),
+                  GeneralWidgets()._emailPasswordWidget('login', myController,
+                      myPassController, myUserNameController),
                   const SizedBox(height: 10),
                   GestureDetector(
                     onTap: () {
@@ -99,7 +112,33 @@ class GeneralWidgets {
                     ),
                   ),
                   const SizedBox(height: 15),
-                  GeneralWidgets()._submitButton(context, 'Login'),
+                  BlocBuilder<UserCubit, UserState>(
+                    builder: (context, state) {
+                      return GestureDetector(
+                        onTap: () {
+                          EasyLoading.instance.userInteractions = false;
+                          EasyLoading.show(status: 'loading...');
+                          ProfilCalss.createToken(
+                                  myController.text, myPassController.text)
+                              .then((value) => {
+                                    if (value)
+                                      {
+                                        EasyLoading.dismiss(),
+                                        controller.setUserStateLoaded(),
+                                        controller.setUserLoginState()
+                                      }
+                                    else
+                                      {
+                                        EasyLoading.showError(
+                                            "Error while loading!"),
+                                        controller.setUserStateError(),
+                                      }
+                                  });
+                        },
+                        child: GeneralWidgets()._submitButton(context, 'Login'),
+                      );
+                    },
+                  ),
                   const SizedBox(height: 30),
                   GestureDetector(
                     onTap: () {
@@ -109,21 +148,22 @@ class GeneralWidgets {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.center,
+                      // ignore: prefer_const_literals_to_create_immutables
                       children: [
-                        Text(
+                        const Text(
                           "You don't have a account?",
                           textAlign: TextAlign.center,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w400,
                             color: Colors.grey,
                           ),
                         ),
                         const SizedBox(width: 3),
-                        Text(
+                        const Text(
                           "Register",
                           textAlign: TextAlign.center,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w400,
                             color: Constants.themeColor,
@@ -135,65 +175,6 @@ class GeneralWidgets {
                   const SizedBox(height: 30),
                   const Divider(),
                   const SizedBox(height: 30),
-                  Column(
-                    children: [
-                      GestureDetector(
-                        onTap: () {},
-                        child: Container(
-                          width: MediaQuery.of(context).size.width,
-                          padding: const EdgeInsets.symmetric(vertical: 15),
-                          alignment: Alignment.center,
-                          decoration: const BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                            color: Colors.white,
-                          ),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.app_blocking),
-                              const SizedBox(width: 5),
-                              Text(
-                                'Continue with Google',
-                                style: const TextStyle(
-                                    fontSize: 16,
-                                    color: Color(0xff060c14),
-                                    fontWeight: FontWeight.w500),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      GestureDetector(
-                        onTap: () {},
-                        child: Container(
-                          width: MediaQuery.of(context).size.width,
-                          padding: const EdgeInsets.symmetric(vertical: 15),
-                          alignment: Alignment.center,
-                          decoration: const BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                            color: Colors.white,
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Icon(Icons.login),
-                              const SizedBox(width: 5),
-                              Text(
-                                'Continue with Apple',
-                                style: const TextStyle(
-                                    fontSize: 16,
-                                    color: Color(0xff060c14),
-                                    fontWeight: FontWeight.w500),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
                   const SizedBox(height: 30),
                 ],
               ),
@@ -205,6 +186,9 @@ class GeneralWidgets {
   }
 
   static SingleChildScrollView createAnAccount(BuildContext context) {
+    final myController = TextEditingController();
+    final myPassController = TextEditingController();
+    final myUserNameController = TextEditingController();
     return SingleChildScrollView(
       child: Center(
         child: Column(
@@ -226,7 +210,7 @@ class GeneralWidgets {
                     onTap: () {
                       Navigator.pop(context);
                     },
-                    child: Text(
+                    child: const Text(
                       "Later",
                       style: TextStyle(
                           color: Colors.grey,
@@ -242,15 +226,52 @@ class GeneralWidgets {
               child: Column(
                 children: [
                   const SizedBox(height: 20),
-                  Text(
+                  const Text(
                     "Create an Account",
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 20),
-                  GeneralWidgets()._emailPasswordWidget('register'),
+                  GeneralWidgets()._emailPasswordWidget('register',
+                      myController, myPassController, myUserNameController),
                   const SizedBox(height: 20),
-                  GeneralWidgets()._submitButton(context, 'Create an account'),
+                  BlocBuilder<UserCubit, UserState>(
+                    builder: (context, state) {
+                      return InkWell(
+                          onTap: () async => {
+                                if (myPassController.text.length >= 8)
+                                  {
+                                    EasyLoading.instance.userInteractions =
+                                        false,
+                                    EasyLoading.show(status: 'loading...'),
+                                    await context
+                                        .read<UserCubit>()
+                                        .createUser(
+                                            myUserNameController.text,
+                                            myPassController.text,
+                                            myController.text,
+                                            "firstName",
+                                            "lastname")
+                                        .then((value) => {
+                                              EasyLoading.instance
+                                                  .userInteractions = true,
+                                              EasyLoading.showSuccess(
+                                                  'Great Success!'),
+                                              Navigator.pop(context),
+                                              GeneralWidgets.showModalLogin(
+                                                  context)
+                                            })
+                                  }
+                                else
+                                  {
+                                    EasyLoading.showError(
+                                        "Pasword length must be greather than 8")
+                                  }
+                              },
+                          child: GeneralWidgets()
+                              ._submitButton(context, 'Create an account'));
+                    },
+                  ),
                   const SizedBox(height: 30),
                   GestureDetector(
                     onTap: () {
@@ -260,21 +281,22 @@ class GeneralWidgets {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.center,
+                      // ignore: prefer_const_literals_to_create_immutables
                       children: [
-                        Text(
+                        const Text(
                           "Already have an account?",
                           textAlign: TextAlign.center,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w400,
                             color: Colors.grey,
                           ),
                         ),
                         const SizedBox(width: 3),
-                        Text(
+                        const Text(
                           "Login",
                           textAlign: TextAlign.center,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w400,
                             color: Constants.themeColor,
@@ -286,65 +308,6 @@ class GeneralWidgets {
                   const SizedBox(height: 30),
                   const Divider(),
                   const SizedBox(height: 30),
-                  Column(
-                    children: [
-                      GestureDetector(
-                        onTap: () {},
-                        child: Container(
-                          width: MediaQuery.of(context).size.width,
-                          padding: const EdgeInsets.symmetric(vertical: 15),
-                          alignment: Alignment.center,
-                          decoration: const BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                            color: Colors.white,
-                          ),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.app_blocking),
-                              const SizedBox(width: 5),
-                              Text(
-                                'Continue with Google',
-                                style: const TextStyle(
-                                    fontSize: 16,
-                                    color: Color(0xff060c14),
-                                    fontWeight: FontWeight.w500),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      GestureDetector(
-                        onTap: () {},
-                        child: Container(
-                          width: MediaQuery.of(context).size.width,
-                          padding: const EdgeInsets.symmetric(vertical: 15),
-                          alignment: Alignment.center,
-                          decoration: const BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                            color: Colors.white,
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Icon(Icons.login),
-                              const SizedBox(width: 5),
-                              Text(
-                                'Continue with Apple',
-                                style: const TextStyle(
-                                    fontSize: 16,
-                                    color: Color(0xff060c14),
-                                    fontWeight: FontWeight.w500),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
                   const SizedBox(height: 30),
                 ],
               ),
@@ -355,17 +318,23 @@ class GeneralWidgets {
     );
   }
 
-  Widget _emailPasswordWidget(String what) {
+  Widget _emailPasswordWidget(
+      String what,
+      TextEditingController controller,
+      TextEditingController passController,
+      TextEditingController userNameController) {
     return Column(
       children: <Widget>[
-        _entryField("Email adress"),
-        if (what == "register") _entryField("Username"),
-        _entryField("Password", isPassword: true),
+        _entryField("Email adress", controller),
+        if (what == "register")
+          _entryFieldRegisterUsername("Username", userNameController),
+        _entryFieldPassword("Password", passController, isPassword: true),
       ],
     );
   }
 
-  Widget _entryField(String title, {bool isPassword = false}) {
+  Widget _entryField(String title, TextEditingController controller,
+      {bool isPassword = false}) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10),
       decoration: const BoxDecoration(
@@ -373,6 +342,52 @@ class GeneralWidgets {
       ),
       width: double.infinity,
       child: TextField(
+        controller: controller,
+        obscureText: isPassword,
+        decoration: InputDecoration(
+          hintText: title,
+          hintStyle: const TextStyle(color: Color(0xff8f8f8f), fontSize: 16),
+          border: InputBorder.none,
+          fillColor: Colors.white,
+          filled: true,
+        ),
+      ),
+    );
+  }
+
+  Widget _entryFieldPassword(String title, TextEditingController controller,
+      {bool isPassword = false}) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      decoration: const BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(10)),
+      ),
+      width: double.infinity,
+      child: TextField(
+        controller: controller,
+        obscureText: isPassword,
+        decoration: InputDecoration(
+          hintText: title,
+          hintStyle: const TextStyle(color: Color(0xff8f8f8f), fontSize: 16),
+          border: InputBorder.none,
+          fillColor: Colors.white,
+          filled: true,
+        ),
+      ),
+    );
+  }
+
+  Widget _entryFieldRegisterUsername(
+      String title, TextEditingController controller,
+      {bool isPassword = false}) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      decoration: const BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(10)),
+      ),
+      width: double.infinity,
+      child: TextField(
+        controller: controller,
         obscureText: isPassword,
         decoration: InputDecoration(
           hintText: title,
@@ -430,9 +445,9 @@ class GeneralWidgets {
             height: 26,
           ),
           const SizedBox(width: 10),
-          Text(
+          const Text(
             "New feautures",
-            style: const TextStyle(
+            style: TextStyle(
               fontWeight: FontWeight.w400,
               fontSize: 15,
             ),
@@ -476,6 +491,7 @@ class GeneralWidgets {
                         const SizedBox(height: 10),
                         vipTopFeatures(),
                         const SizedBox(height: 20),
+                        // ignore: prefer_const_constructors
                         Text(
                           "and much more",
                           style: const TextStyle(
@@ -498,30 +514,30 @@ class GeneralWidgets {
                                   width: 1,
                                   color: Colors.grey.shade300,
                                 )),
-                            padding: EdgeInsets.symmetric(
+                            padding: const EdgeInsets.symmetric(
                                 horizontal: 5, vertical: 10),
                             child: Column(
                               children: [
-                                Text(
+                                const Text(
                                   "Monthly",
                                   textAlign: TextAlign.center,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.w400),
                                 ),
                                 const SizedBox(height: 5),
-                                Text(
+                                const Text(
                                   "\$9.99",
                                   textAlign: TextAlign.center,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                       fontSize: 19,
                                       fontWeight: FontWeight.w600),
                                 ),
                                 const SizedBox(height: 5),
-                                Text(
+                                const Text(
                                   "Cancel anytime",
                                   textAlign: TextAlign.center,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                       fontSize: 12, color: Colors.grey),
                                 ),
                               ],
@@ -545,26 +561,26 @@ class GeneralWidgets {
                                 width: double.infinity,
                                 child: Column(
                                   children: [
-                                    Text(
+                                    const Text(
                                       "Yearly",
                                       textAlign: TextAlign.center,
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                           fontSize: 13,
                                           fontWeight: FontWeight.w400),
                                     ),
                                     const SizedBox(height: 5),
-                                    Text(
+                                    const Text(
                                       "\$99.9",
                                       textAlign: TextAlign.center,
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                           fontSize: 19,
                                           fontWeight: FontWeight.w600),
                                     ),
                                     const SizedBox(height: 5),
-                                    Text(
+                                    const Text(
                                       "\$8.9 monthly",
                                       textAlign: TextAlign.center,
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                           fontSize: 12, color: Colors.grey),
                                     ),
                                   ],
@@ -581,13 +597,13 @@ class GeneralWidgets {
                                       color: Constants.themeColor,
                                       borderRadius: BorderRadius.circular(50),
                                     ),
-                                    padding: EdgeInsets.symmetric(
+                                    padding: const EdgeInsets.symmetric(
                                       horizontal: 10,
                                       vertical: 3,
                                     ),
-                                    child: Text(
+                                    child: const Text(
                                       "Save % 24",
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         color: Colors.white,
                                         fontSize: 13,
                                       ),
@@ -610,9 +626,9 @@ class GeneralWidgets {
                           size: 18,
                           color: Colors.grey,
                         ),
-                        Text(
+                        const Text(
                           "The payment is securely allocated by the Play Store.",
-                          style: const TextStyle(color: Colors.grey),
+                          style: TextStyle(color: Colors.grey),
                         ),
                       ],
                     ),
@@ -625,10 +641,9 @@ class GeneralWidgets {
                       ),
                       child: TextButton(
                         onPressed: () {},
-                        child: Text(
+                        child: const Text(
                           "Pay Now",
-                          style: const TextStyle(
-                              fontSize: 16, color: Colors.white),
+                          style: TextStyle(fontSize: 16, color: Colors.white),
                         ),
                       ),
                     ),
@@ -636,9 +651,9 @@ class GeneralWidgets {
                       onPressed: () {
                         Navigator.of(context).pop();
                       },
-                      child: Text(
+                      child: const Text(
                         "I'll do later",
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: Colors.grey,
                         ),
                       ),
@@ -680,14 +695,16 @@ class GeneralWidgets {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => DetailsPage(imageUrl: contentLink!),
+            builder: (context) => DetailsPage(postModel: postModel!),
           ),
         );
       }),
       child: FutureBuilder(
-        future: GetThumbnailFromVideo.getCategory(contentLink!),
+        future: GetThumbnailFromVideo.getLink(contentLink!),
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
+            var logger = Logger();
+            logger.i(snapshot.data);
             return SizedBox(
               width: (size.width / 2.5),
               child: Stack(
@@ -744,9 +761,9 @@ class GeneralWidgets {
                                             const Color.fromRGBO(0, 0, 0, 0.45),
                                         borderRadius:
                                             BorderRadius.circular(50)),
-                                    child: Text(
+                                    child: const Text(
                                       "Cars",
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           color: Colors.white),
                                     ),
@@ -760,7 +777,8 @@ class GeneralWidgets {
                                 padding: const EdgeInsets.symmetric(
                                     vertical: 5, horizontal: 6),
                                 decoration: BoxDecoration(
-                                  color: Color.fromARGB(180, 255, 255, 255),
+                                  color:
+                                      const Color.fromARGB(180, 255, 255, 255),
                                   borderRadius: BorderRadius.circular(50),
                                 ),
                                 child: const Icon(Icons.play_arrow_outlined)),
@@ -776,6 +794,8 @@ class GeneralWidgets {
               ),
             );
           } else {
+            var logger = Logger();
+            logger.i("thumbnail Hata!");
             return Container();
           }
         },
@@ -816,12 +836,12 @@ class GeneralWidgets {
                             padding: const EdgeInsets.symmetric(
                                 vertical: 5, horizontal: 6),
                             decoration: BoxDecoration(
-                              color: Color.fromARGB(180, 255, 255, 255),
+                              color: const Color.fromARGB(180, 255, 255, 255),
                               borderRadius: BorderRadius.circular(50),
                             ),
-                            child: Text(
+                            child: const Text(
                               "Cars",
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: Color(0xff111111),
                                 fontSize: 12,
                                 fontWeight: FontWeight.w500,
@@ -878,7 +898,8 @@ class GeneralWidgets {
                         const SizedBox(width: 3),
                         Text(
                           postModel!.like!.length.toString(),
-                          style: TextStyle(fontSize: 14, color: Colors.white54),
+                          style: const TextStyle(
+                              fontSize: 14, color: Colors.white54),
                         ),
                       ],
                     )

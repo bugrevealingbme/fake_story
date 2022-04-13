@@ -1,19 +1,15 @@
-import 'dart:math';
-
 import 'package:fake_story/api/api_calls/home_calls.dart';
 import 'package:fake_story/data/model/postmodel.dart';
-import 'package:fake_story/screens/allCategories.dart';
 import 'package:fake_story/screens/category.dart';
-import 'package:fake_story/screens/profile.dart';
 import 'package:fake_story/screens/search_page.dart';
+import 'package:fake_story/screens/settings_page.dart';
 import 'package:fake_story/utils/app_constans.dart';
-import 'package:fake_story/utils/shared_prefs_ext.dart';
 import 'package:fake_story/widgets/grid_gallery.dart';
 import 'package:fake_story/widgets/navbar.dart';
+import 'package:fake_story/widgets/require_login.dart';
 import 'package:fake_story/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:logger/logger.dart';
 
 import '../bloc/getx/getx_controller.dart';
@@ -32,6 +28,8 @@ class _MyHomePageState extends State<MyHomePage>
   void initState() {
     final Controller controller = Get.put(Controller());
     _tabController = TabController(vsync: this, initialIndex: 0, length: 2);
+    //context.read<UserCubit>().createToken("username", "123enes1");
+
     super.initState();
   }
 
@@ -46,7 +44,12 @@ class _MyHomePageState extends State<MyHomePage>
             if (val == 2) {
               gallerySheet(context);
             } else if (val == 3) {
-              GeneralWidgets.showModalCreateAcc(context);
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => SettingsPage(),
+                ),
+              );
+              // GeneralWidgets.showModalCreateAcc(context);
             }
             _selectedIndex = val;
           },
@@ -194,6 +197,7 @@ class _HomeVideosViewState extends State<HomeVideosView>
     with AutomaticKeepAliveClientMixin {
   final Controller controller = Get.put(Controller());
   List<PostModel>? postList;
+  int pagesize = 0;
   @override
   void initState() {
     super.initState();
@@ -319,6 +323,9 @@ class _HomeVideosViewState extends State<HomeVideosView>
                         ),
                         child: TabBar(
                             onTap: (value) => {
+                                  setState(() {
+                                    pagesize = value;
+                                  }),
                                   if (value == 0)
                                     {
                                       print("index 0 veya 1"),
@@ -407,27 +414,33 @@ class _HomeVideosViewState extends State<HomeVideosView>
                 if (controller.postVideoList.isNotEmpty) {
                   var logger = Logger();
                   logger.i(" data dolu video");
-                  return Obx(() => GridView.builder(
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: viewer ? 2 : 3,
-                          childAspectRatio: 0.571,
-                          crossAxisSpacing: Constants.gridSpacing,
-                          mainAxisSpacing: Constants.gridSpacing,
-                        ),
-                        shrinkWrap: true,
-                        primary: false,
-                        itemCount: controller.postVideoList.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return GeneralWidgets.storyVideo(
-                              context,
-                              size,
-                              controller.postVideoList[index].link,
-                              controller.postVideoList[index].createdAt,
-                              controller.postVideoList[index],
-                              viewer,
-                              showCategory: false);
-                        },
-                      ));
+                  logger.i(controller.postVideoList[0].link);
+                  if (pagesize == 1 && !controller.isUserLogin.value) {
+                    return forceLogin(context);
+                  } else {
+                    return Obx(() => GridView.builder(
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: viewer ? 2 : 3,
+                            childAspectRatio: 0.571,
+                            crossAxisSpacing: Constants.gridSpacing,
+                            mainAxisSpacing: Constants.gridSpacing,
+                          ),
+                          shrinkWrap: true,
+                          primary: false,
+                          itemCount: controller.postVideoList.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return GeneralWidgets.storyVideo(
+                                context,
+                                size,
+                                controller.postVideoList[index].link,
+                                controller.postVideoList[index].createdAt,
+                                controller.postVideoList[index],
+                                viewer,
+                                showCategory: false);
+                          },
+                        ));
+                  }
                 } else {
                   var logger = Logger();
                   logger.i(" data bos video");

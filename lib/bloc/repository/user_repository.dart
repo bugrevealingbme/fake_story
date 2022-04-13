@@ -2,10 +2,8 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:fake_story/api/endpoints.dart';
-import 'package:fake_story/data/model/user_post_model.dart';
 import 'package:fake_story/utils/shared_prefs_ext.dart';
 import 'package:logger/logger.dart';
-
 import '../../data/model/usermodel.dart';
 
 abstract class UserRepository {

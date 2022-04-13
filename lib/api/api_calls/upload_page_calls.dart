@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 
 class UploadPageCalls {
-  static String BASEURL = "http://146.19.57.51:8888/";
+  static String BASEURL = "http://185.174.61.27:8888/";
   static Future<bool> createPost(
       String filepath, String title, String language, bool isVideo) async {
     // shared pref ten token cekilecek burada

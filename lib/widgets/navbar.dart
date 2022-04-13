@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:fake_story/screens/home.dart';
 import 'package:fake_story/screens/profile.dart';
 import 'package:fake_story/utils/app_constans.dart';
+import 'package:fake_story/utils/shared_prefs_ext.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -75,10 +76,10 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
   Widget buildNavBarItem(String icon, int index) {
     List<String> _stringList = [
       'home'.tr,
-      'Premium',
-      'Upload',
-      'Tools',
-      'Profile',
+      'premium'.tr,
+      'upload'.tr,
+      'tools'.tr,
+      'profile'.tr,
     ];
 
     return GestureDetector(
@@ -86,6 +87,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
         widget.onChange(index);
         setState(() {
           if (index == 4 && _selectedIndex != index) {
+            // GeneralWidgets.showModalLogin(context);
             Navigator.push(
                 context,
                 MaterialPageRoute(

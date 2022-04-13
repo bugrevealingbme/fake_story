@@ -1,17 +1,18 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:fake_story/screens/view_image.dart';
+import 'package:fake_story/api/download/download.dart';
+import 'package:fake_story/data/model/postmodel.dart';
 import 'package:fake_story/utils/app_constans.dart';
+import 'package:fake_story/widgets/videoPlayer.dart';
 import 'package:fake_story/widgets/widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:logger/logger.dart';
+import 'package:video_player/video_player.dart';
 
 class DetailsPage extends StatefulWidget {
   static const String id = "details_page";
-  String imageUrl;
   String? search;
-
-  DetailsPage({Key? key, required this.imageUrl, this.search})
+  PostModel postModel;
+  DetailsPage({Key? key, required this.postModel, this.search})
       : super(key: key);
 
   @override
@@ -22,11 +23,20 @@ class _DetailsPageState extends State<DetailsPage> {
   final ScrollController _scrollController = ScrollController();
   bool isLoading = true;
   bool isLoadPage = false;
-
+  bool downloading = false;
+  var progressString = "";
+  var logger = Logger();
+  final imgUrl =
+      "https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4";
+  VideoPlayerController? controller;
   @override
   void initState() {
     super.initState();
 
+    controller = VideoPlayerController.network(widget.postModel.link!)
+      ..initialize().then((_) {
+        setState(() {});
+      });
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
@@ -38,7 +48,30 @@ class _DetailsPageState extends State<DetailsPage> {
         });
       }
     });
+    logger.i(widget.postModel.link);
   }
+
+  // Future<void> downloadFile() async {
+  //   Dio dio = Dio();
+
+  //   try {
+  //     var dir = await getExternalStorageDirectory();
+  //     print("path ${dir!.path}");
+  //     await dio.download(imgUrl, "${dir.path}/demo.mp4",
+  //         onReceiveProgress: (rec, total) {
+  //       print("Rec: $rec , Total: $total");
+
+  //       setState(() {
+  //         downloading = true;
+  //         progressString = ((rec / total) * 100).toStringAsFixed(0) + "%";
+  //       });
+  //     });
+  //   } catch (e) {
+  //     print(e);
+  //   }
+
+  //   print("Download completed");
+  // }
 
   void snackBar(String text) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -100,12 +133,8 @@ class _DetailsPageState extends State<DetailsPage> {
                   // #post_image
                   AspectRatio(
                     aspectRatio: 1,
-                    child: CachedNetworkImage(
-                      imageUrl: widget.imageUrl,
-                      placeholder: (context, url) =>
-                          Image.asset("assets/images/default.png"),
-                      errorWidget: (context, url, error) =>
-                          Image.asset("assets/images/default.png"),
+                    child: Container(
+                      child: videoPlayer(context, controller!),
                     ),
                   ),
                   const SizedBox(height: 15),
@@ -121,7 +150,10 @@ class _DetailsPageState extends State<DetailsPage> {
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: TextButton.icon(
-                              onPressed: () {},
+                              onPressed: () {
+                                // DownloaderNotifier.downloader(
+                                //     imgUrl, "tes1", "tes32t", context);
+                              },
                               icon: const Icon(Icons.download_rounded),
                               label: Text(
                                 "Download",
@@ -150,7 +182,7 @@ class _DetailsPageState extends State<DetailsPage> {
                           ),
                           const SizedBox(width: 3),
                           Text(
-                            "● 167 follower",
+                            progressString,
                             style: const TextStyle(
                                 fontSize: 13, color: Colors.grey),
                           ),
@@ -197,7 +229,7 @@ class _DetailsPageState extends State<DetailsPage> {
                             size,
                             null,
                             null,
-                            null,
+                            widget.postModel,
                             viewer,
                             showCategory: false,
                           ),

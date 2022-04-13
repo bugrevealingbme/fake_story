@@ -1,6 +1,7 @@
 import 'dart:ffi';
 
 import 'package:dio/dio.dart';
+import 'package:fake_story/utils/shared_prefs_ext.dart';
 import 'package:logger/logger.dart';
 
 import '../../data/model/categoryGetModel.dart';
@@ -8,7 +9,7 @@ import '../../data/model/categorymodel.dart';
 import '../../data/model/postmodel.dart';
 
 class HomeCall {
-  static String BASEURL = "http://146.19.57.51:8888/";
+  static String BASEURL = "http://185.174.61.27:8888/";
   static Future<List<PostModel>> getAllPosts(
       String language, bool? isVideo) async {
     var logger = Logger();
@@ -107,8 +108,7 @@ class HomeCall {
     // Takip ettiğin kullanıcılların postlarını gosterme
 
     // shared pref ten token cekilecek burada
-    var token =
-        "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjo1MjQ5NTQzNjA3LCJpYXQiOjE2NDk1NDM2MDcsImp0aSI6Ijc5ZGE4ZDEwZGQzNTQxYTFiYjcwOGJhY2U0MmI0MGYwIiwidXNlcl9pZCI6Mn0.GrUwwbmokE5UdLhb7XN0g-Tzf2YF7F8rIYqvne8TXLM";
+    var token = await CustomSharedPref.readStringDataToLanguage("accessToken");
     var dio = Dio();
     Response response;
     dio.options.headers["Authorization"] = 'Bearer $token';

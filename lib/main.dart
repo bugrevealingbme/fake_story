@@ -4,28 +4,27 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:fake_story/bloc/cubit/user_cubit.dart';
 import 'package:fake_story/bloc/repository/user_repository.dart';
 import 'package:fake_story/languages.dart';
+import 'package:fake_story/provider/app_provider.dart';
 import 'package:fake_story/screens/splash_screen.dart';
 import 'package:fake_story/utils/app_constans.dart';
 import 'package:fake_story/utils/config.dart';
 import 'package:fake_story/utils/shared_prefs_ext.dart';
+import 'package:fake_story/widgets/video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
-
+import 'package:provider/provider.dart';
+import 'package:fake_story/dependency/injection_container.dart' as dp;
 import 'bloc/getx/getx_controller.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await EasyLocalization.ensureInitialized();
-  runApp(EasyLocalization(
-      child: const MyApp(),
-      supportedLocales: const [
-        Locale('en', 'Us'),
-        Locale('tr', 'TR'),
-        Locale('es', 'ES')
-      ],
-      path: 'assets/translations'));
+  await dp.init();
+  runApp(MultiProvider(
+    providers: AppProviderContainer.providerlist,
+    child: const MyApp(),
+  ));
 }
 
 class MyApp extends StatefulWidget {
@@ -36,14 +35,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  @override
-  void didChangeDependencies() {
-    CustomSharedPref.writeStringDataToSharedPref(
-        "languageData", Get.deviceLocale.toString());
-
-    super.didChangeDependencies();
-  }
-
   @override
   Widget build(BuildContext context) {
     // final Controller controller = Get.put(Controller());
@@ -66,6 +57,7 @@ class _MyAppState extends State<MyApp> {
         ),
         home: const SplashScreen(),
         debugShowCheckedModeBanner: false,
+        builder: EasyLoading.init(),
       ),
     );
   }

@@ -8,7 +8,8 @@ class SearchPageCalls {
     var dio = Dio();
 
     Response response;
-    response = await dio.post("146.19.57.51:8888/app/post/?search=$searchTerm");
+    response = await dio
+        .post("http://185.174.61.27:8888/app/post/?search=$searchTerm");
     logger.i(response.data);
     // var user = UserModel.fromJson(response.data);
     //  logger.i(user.firstName);

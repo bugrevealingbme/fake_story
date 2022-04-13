@@ -33,7 +33,7 @@ class UserCubit extends Cubit<UserState> {
       logger.i("emit state is loading");
       var createdUser = await loginRepository.register(
           username, password, email, firstName, lastname);
-      logger.i("emit state is loaded");
+      logger.i("emit state is createdUser");
       emit(UserCreatedState(createdUser!));
     } catch (e) {
       logger.i("emit state is error::$e");
@@ -44,7 +44,7 @@ class UserCubit extends Cubit<UserState> {
   Future<void> createToken(String username, String password) async {
     var logger = Logger();
     try {
-      logger.i("emit state is init");
+      logger.i("emit state token is init");
       emit(UserLoadingState());
       logger.i("emit token state is loading");
       var accessToken =

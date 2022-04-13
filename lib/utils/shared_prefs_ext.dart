@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CustomSharedPref {
@@ -19,5 +21,25 @@ class CustomSharedPref {
     final String? action = prefs.getString(key);
     print(action);
     return action;
+  }
+
+  static Future<bool> isUserLogin() async {
+    var isLogin =
+        await CustomSharedPref.readStringDataToSharedPref("accessToken");
+    if (isLogin == null) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  static Future<String> stringDonerGetToken() async {
+    var isLogin =
+        await CustomSharedPref.readStringDataToSharedPref("accessToken");
+    if (isLogin == null) {
+      return "";
+    } else {
+      return isLogin;
+    }
   }
 }

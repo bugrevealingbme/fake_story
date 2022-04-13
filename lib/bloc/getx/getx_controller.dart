@@ -1,3 +1,5 @@
+import 'package:fake_story/bloc/getx/user_state_enum.dart';
+import 'package:fake_story/utils/shared_prefs_ext.dart';
 import 'package:get/get.dart';
 
 import '../../data/model/postmodel.dart';
@@ -15,4 +17,24 @@ class Controller extends GetxController {
 
   var language = "".obs;
   changeLanguage(String newLanguage) => language.value = newLanguage;
+
+  var postLanguage = "".obs;
+  changePostLanguage(String newLanguage) => postLanguage.value = newLanguage;
+
+  var isUserLogin = false.obs;
+  setUserLoginState() async =>
+      {isUserLogin.value = await CustomSharedPref.isUserLogin()};
+  var userState = UserStates.loading.obs;
+  setUserStateLoaded() {
+    userState.value = UserStates.loaded;
+    isUserLogin.value = true;
+  }
+
+  setUserStateLoading() {
+    userState.value = UserStates.loading;
+  }
+
+  setUserStateError() {
+    userState.value = UserStates.error;
+  }
 }
