@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:fake_story/data/model/tokenmodel.dart';
+import 'package:logger/logger.dart';
 
+import '../../data/model/profilemodel.dart';
 import '../../data/model/usermodel.dart';
 import '../../utils/shared_prefs_ext.dart';
 
@@ -8,7 +10,10 @@ class ProfilCalss {
   static String BASEURL = "http://185.174.61.27:8888/";
   static Future<UserModel> userInformations() async {
     // shared pref ten token cekilecek burada
+    var logger = Logger();
+
     var token = await CustomSharedPref.readStringDataToLanguage("accessToken");
+
     var dio = Dio();
     Response response;
     dio.options.headers["Authorization"] = 'Bearer $token';
@@ -16,6 +21,7 @@ class ProfilCalss {
     print('Response status: ${response.statusCode}');
     print('Response body: ${response.data}');
     var user = UserModel.fromJson(response.data);
+    logger.i(user.username);
     return user;
   }
 
@@ -38,5 +44,23 @@ class ProfilCalss {
       // login başarısız
       return false;
     }
+  }
+
+  static Future<ProfileRelate> profilPhotoUpload(String filepath) async {
+    // shared pref ten token cekilecek burada
+    //File alınacak yada path burada yükleme işlemi olacak profile photo
+    var token = await CustomSharedPref.readStringDataToLanguage("accessToken");
+    var dio = Dio();
+    Response response;
+    dio.options.headers["Authorization"] = 'Bearer $token';
+    var formData = FormData.fromMap({
+      'file': await MultipartFile.fromFile(filepath,
+          filename: "testtt." + filepath.split('.').last)
+    });
+    response = await dio.put(BASEURL + "user/me/", data: formData);
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.data}');
+    var user = ProfileRelate.fromJson(response.data);
+    return user;
   }
 }

@@ -1,4 +1,5 @@
 import 'package:fake_story/bloc/getx/user_state_enum.dart';
+import 'package:fake_story/data/model/usermodel.dart';
 import 'package:fake_story/utils/shared_prefs_ext.dart';
 import 'package:get/get.dart';
 
@@ -37,4 +38,15 @@ class Controller extends GetxController {
   setUserStateError() {
     userState.value = UserStates.error;
   }
+
+  var userModel = [].obs;
+  setUserModel(UserModel post) => {userModel.clear(), userModel.add(post)};
+
+  var miniPostList = [].obs;
+  setMiniPostList(List<MiniPost> post) =>
+      {miniPostList.clear(), miniPostList.addAll(post)};
+
+  var miniSerachPostList = [].obs;
+  setMiniSearchPostList(List<MiniPost> post) =>
+      {miniSerachPostList.clear(), miniSerachPostList.addAll(post)};
 }

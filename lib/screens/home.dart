@@ -406,7 +406,7 @@ class _HomeVideosViewState extends State<HomeVideosView>
             ),
             const SizedBox(height: 20),
             FutureBuilder(
-              future: HomeCall.getSearchPostList("", true, "like", "tr_TR")
+              future: HomeCall.getSearchPostList("", true, "stream", "tr_TR")
                   .then((value) => {
                         controller.addPostVideoList(value!),
                       }),

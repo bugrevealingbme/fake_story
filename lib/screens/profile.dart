@@ -1,23 +1,21 @@
 import 'dart:io';
 
 import 'package:fake_story/api/api_calls/profil_page_calls.dart';
-import 'package:fake_story/bloc/cubit/user_cubit.dart';
-import 'package:fake_story/bloc/getx/user_state_enum.dart';
+import 'package:fake_story/components/profile/profile_post_widget.dart';
 import 'package:fake_story/utils/app_constans.dart';
-import 'package:fake_story/utils/string.extension.dart';
-import 'package:fake_story/widgets/navbar.dart';
+import 'package:fake_story/widgets/loading.dart';
 import 'package:fake_story/widgets/widgets.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:logger/logger.dart';
 
 import '../bloc/getx/getx_controller.dart';
-import '../bloc/states/user_states.dart';
-import '../utils/shared_prefs_ext.dart';
 
 import 'package:flutter/foundation.dart';
+
+import '../data/model/usermodel.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -38,10 +36,12 @@ class _ProfilePageState extends State<ProfilePage>
   File? _image;
   final picker = ImagePicker();
   final Controller controller = Get.put(Controller());
+  UserModel? data;
 
   @override
   void initState() {
     _tabController = TabController(vsync: this, initialIndex: 0, length: 3);
+
     super.initState();
   }
 
@@ -49,7 +49,7 @@ class _ProfilePageState extends State<ProfilePage>
     final choice = await showDialog<String>(
         context: context,
         builder: (context) => AlertDialog(
-              title: Text(
+              title: const Text(
                 "Profil Fotoğrafınızın Türü nedir",
                 style: TextStyle(color: Colors.black),
               ),
@@ -63,28 +63,24 @@ class _ProfilePageState extends State<ProfilePage>
                 // ignore: deprecated_member_use
                 TextButton(
                     onPressed: () => Navigator.pop(context, "jpeg"),
-                    child: Text("Jpeg/Png")),
+                    child: const Text("Jpeg/Png")),
                 // ignore: deprecated_member_use
                 TextButton(
                     onPressed: () => Navigator.pop(context, "gif"),
-                    child: Text("gif")),
+                    child: const Text("gif")),
               ],
             ));
     if (choice == "jpeg") {
       final pickedFile =
           await picker.getImage(source: ImageSource.gallery, imageQuality: 50);
-      setState(() {
+      setState(() async {
         if (pickedFile != null) {
           print("aldı imageyi");
           _image = File(pickedFile.path);
-          // AnimesonApiManager().uploadProfilePic(_image, _userid).then((value) {
-          //   if (value == 200) {
-          //     print("çalıştı");
-          //     AppProviderContainer.userDataProvider.setProfilepicFile(_image);
-          //   } else {
-          //     print("error");
-          //   }
-          // });
+          var alpha = await ProfilCalss.profilPhotoUpload(pickedFile.path);
+          if (alpha != null) {
+            setState(() {});
+          }
         } else {
           print('No image selected.');
         }
@@ -95,6 +91,7 @@ class _ProfilePageState extends State<ProfilePage>
       if (result != null) {
         setState(() {
           _image = File(result.files.single.path!);
+
           // AnimesonApiManager().uploadProfilePic(_image, _userid).then((value) {
           //   if (value == 200) {
           //     print("çalıştı");
@@ -115,7 +112,9 @@ class _ProfilePageState extends State<ProfilePage>
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-
+    var likedLength = 0;
+    var savedLength = 0;
+    var uploadsLength = 0;
     return Scaffold(
       backgroundColor: Constants.primaryColor,
       appBar: AppBar(
@@ -145,10 +144,19 @@ class _ProfilePageState extends State<ProfilePage>
         child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
             child: FutureBuilder(
-                future: ProfilCalss.userInformations(),
+                future: ProfilCalss.userInformations().then((value) => {
+                      controller.setUserModel(value),
+                      controller
+                          .setMiniPostList(controller.userModel[0].likeRelated)
+                    }),
                 builder:
                     (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
                   if (snapshot.connectionState == ConnectionState.done) {
+                    var logger = Logger();
+
+                    likedLength = controller.userModel[0].likeRelated.length;
+                    savedLength = controller.userModel[0].favoriRelated.length;
+                    uploadsLength = controller.userModel[0].postRelated.length;
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -166,8 +174,10 @@ class _ProfilePageState extends State<ProfilePage>
                                     width: 64,
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(50),
-                                      child:
-                                          Image.network("", fit: BoxFit.cover),
+                                      child: Image.network(
+                                          controller.userModel[0].profileRelate
+                                              .profileimage,
+                                          fit: BoxFit.cover),
                                     ),
                                   ),
                                 ),
@@ -176,16 +186,20 @@ class _ProfilePageState extends State<ProfilePage>
                                   child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
+                                    // ignore: prefer_const_literals_to_create_immutables
                                     children: [
                                       Text(
-                                        snapshot.data.username,
+                                        controller.userModel[0].username,
+                                        // ignore: prefer_const_constructors
                                         style: TextStyle(
                                             fontSize: 17,
                                             fontWeight: FontWeight.w600),
                                       ),
                                       const SizedBox(height: 5),
                                       Text(
-                                        snapshot.data.profileRelate.bio,
+                                        controller
+                                            .userModel[0].profileRelate.bio,
+                                        // ignore: prefer_const_constructors
                                         style: TextStyle(
                                             fontSize: 14, color: Colors.grey),
                                       ),
@@ -203,8 +217,12 @@ class _ProfilePageState extends State<ProfilePage>
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
+                                    // ignore: prefer_const_constructors
                                     Text(
-                                      snapshot.data.postRelate.length,
+                                      controller.userModel[0].postRelated.length
+                                          .toString()
+                                          .toString(),
+                                      // ignore: prefer_const_constructors
                                       style: TextStyle(
                                           fontSize: 17,
                                           fontWeight: FontWeight.bold),
@@ -226,7 +244,9 @@ class _ProfilePageState extends State<ProfilePage>
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
                                     Text(
-                                      snapshot.data.followers.length,
+                                      controller.userModel[0].followers.length
+                                          .toString(),
+                                      // ignore: prefer_const_constructors
                                       style: TextStyle(
                                         fontSize: 17,
                                         fontWeight: FontWeight.bold,
@@ -249,7 +269,9 @@ class _ProfilePageState extends State<ProfilePage>
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
                                     Text(
-                                      snapshot.data.following.length,
+                                      controller.userModel[0].following.length
+                                          .toString(),
+                                      // ignore: prefer_const_constructors
                                       style: TextStyle(
                                           fontSize: 17,
                                           fontWeight: FontWeight.bold),
@@ -272,25 +294,6 @@ class _ProfilePageState extends State<ProfilePage>
                         const SizedBox(height: 20),
                         Row(
                           children: [
-                            Expanded(
-                              child: ElevatedButton(
-                                onPressed: () {},
-                                child: const Text(
-                                  "Follow",
-                                  style: TextStyle(fontWeight: FontWeight.w500),
-                                ),
-                                style: ButtonStyle(
-                                  //backgroundColor: MaterialStateProperty.all<Color>(color),
-                                  elevation: MaterialStateProperty.all(0),
-                                  shape: MaterialStateProperty.all<
-                                      RoundedRectangleBorder>(
-                                    RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(50),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
                             const SizedBox(width: 15),
                             Container(
                                 decoration: BoxDecoration(
@@ -309,6 +312,7 @@ class _ProfilePageState extends State<ProfilePage>
                                     PopupMenuItem(
                                       value: 1,
                                       child: Row(
+                                        // ignore: prefer_const_literals_to_create_immutables
                                         children: [
                                           const Text("Report"),
                                           const SizedBox(width: 10),
@@ -320,6 +324,7 @@ class _ProfilePageState extends State<ProfilePage>
                                     PopupMenuItem(
                                       value: 2,
                                       child: Row(
+                                        // ignore: prefer_const_literals_to_create_immutables
                                         children: [
                                           const Text("Block"),
                                           const SizedBox(width: 10),
@@ -360,6 +365,28 @@ class _ProfilePageState extends State<ProfilePage>
                                 unselectedLabelStyle: const TextStyle(
                                     fontSize: 15, fontWeight: FontWeight.w500),
                                 isScrollable: true,
+                                onTap: (value) {
+                                  print(value);
+                                  logger.i(controller.miniPostList.length);
+                                  //Burada controler dolacak
+                                  if (value == 0) {
+                                    logger
+                                        .i(controller.userModel[0].likeRelated);
+                                    controller.setMiniPostList(
+                                        controller.userModel[0].likeRelated);
+                                  } else if (value == 1) {
+                                    logger.i(
+                                        controller.userModel[0].favoriRelated);
+                                    controller.setMiniPostList(
+                                        controller.userModel[0].favoriRelated);
+                                  } else {
+                                    logger
+                                        .i(controller.userModel[0].postRelated);
+                                    controller.setMiniPostList(
+                                        controller.userModel[0].postRelated);
+                                  }
+                                },
+                                // ignore: prefer_const_literals_to_create_immutables
                                 tabs: <Widget>[
                                   const Tab(
                                     text: "Liked",
@@ -376,6 +403,7 @@ class _ProfilePageState extends State<ProfilePage>
                             const Spacer(),
                             GestureDetector(
                               onTap: () {
+                                print(_tabController.index);
                                 setState(() {
                                   viewer = viewer ? false : true;
                                 });
@@ -383,34 +411,45 @@ class _ProfilePageState extends State<ProfilePage>
                               child: GeneralWidgets.viewerContainer(viewer),
                             ),
                           ],
+
+                          //Gridviewo burasi
                         ),
                         const SizedBox(height: 15),
-                        GridView.count(
-                          crossAxisCount: viewer ? 2 : 3,
-                          childAspectRatio: 0.571,
-                          shrinkWrap: true,
-                          primary: false,
-                          crossAxisSpacing: 10,
-                          mainAxisSpacing: 10,
-                          children: <Widget>[
-                            GeneralWidgets.storyVideo(
-                                context, size, null, null, null, viewer,
-                                showCategory: false),
-                            GeneralWidgets.storyVideo(
-                                context, size, null, null, null, viewer,
-                                showCategory: false),
-                            GeneralWidgets.storyVideo(
-                                context, size, null, null, null, viewer,
-                                showCategory: false),
-                            GeneralWidgets.storyVideo(
-                                context, size, null, null, null, viewer,
-                                showCategory: false),
-                          ],
-                        ),
+                        FutureBuilder(builder: (BuildContext context,
+                            AsyncSnapshot<dynamic> snapshot) {
+                          if (controller.userModel.isNotEmpty) {
+                            var logger = Logger();
+
+                            return Obx(() => GridView.builder(
+                                  gridDelegate:
+                                      SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: viewer ? 2 : 3,
+                                    childAspectRatio: 0.571,
+                                    crossAxisSpacing: 5,
+                                    mainAxisSpacing: 5,
+                                  ),
+                                  shrinkWrap: true,
+                                  primary: false,
+                                  itemCount: controller.miniPostList.length,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    return ProfilePostWidgets.postProfileWidget(
+                                        context,
+                                        size,
+                                        controller.miniPostList[index],
+                                        viewer);
+                                  },
+                                ));
+                          } else {
+                            return Container(
+                              child: Text("asd"),
+                            );
+                          }
+                        })
                       ],
                     );
                   } else {
-                    return Text("enesin gonlu olsun");
+                    return Center(child: const LoadingIndicator());
                   }
                 })),
       ),

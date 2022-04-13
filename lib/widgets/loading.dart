@@ -43,7 +43,7 @@ class _LoadingIndicatorState extends State<LoadingIndicator> {
     var displayedText = widget.text;
     return Container(
         padding: EdgeInsets.all(16),
-        color: Colors.black87,
+        color: Colors.transparent,
         child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
@@ -67,8 +67,8 @@ class _LoadingIndicatorState extends State<LoadingIndicator> {
   Widget _getHeading(context) {
     return Padding(
         child: Text(
-          'Lütfen Bekleyin...',
-          style: TextStyle(color: Colors.white, fontSize: 16),
+          'Loading...',
+          style: TextStyle(color: Colors.black, fontSize: 16),
           textAlign: TextAlign.center,
         ),
         padding: EdgeInsets.only(bottom: 4));

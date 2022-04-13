@@ -1,9 +1,15 @@
+import 'package:fake_story/api/api_calls/detail_page_calls.dart';
 import 'package:fake_story/api/download/download.dart';
+import 'package:fake_story/components/profile/profile_post_widget.dart';
 import 'package:fake_story/data/model/postmodel.dart';
+import 'package:fake_story/data/model/usermodel.dart';
+import 'package:fake_story/screens/view_image.dart';
 import 'package:fake_story/utils/app_constans.dart';
+import 'package:fake_story/widgets/loading.dart';
 import 'package:fake_story/widgets/videoPlayer.dart';
 import 'package:fake_story/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:logger/logger.dart';
 import 'package:video_player/video_player.dart';
@@ -48,7 +54,6 @@ class _DetailsPageState extends State<DetailsPage> {
         });
       }
     });
-    logger.i(widget.postModel.link);
   }
 
   // Future<void> downloadFile() async {
@@ -96,154 +101,161 @@ class _DetailsPageState extends State<DetailsPage> {
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
 
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      backgroundColor: Colors.black,
-      floatingActionButtonLocation: FloatingActionButtonLocation.startTop,
-      floatingActionButton: GestureDetector(
-        onTap: () {
-          Navigator.pop(context);
-        },
-        child: Container(
-          margin: const EdgeInsets.only(top: 10),
-          height: 40,
-          width: 40,
-          decoration: const BoxDecoration(
-              shape: BoxShape.circle, color: Colors.black54),
-          child: const Icon(Icons.chevron_left, color: Colors.white),
-        ),
-      ),
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: Container(),
-        toolbarHeight: 0,
-      ),
-      body: SingleChildScrollView(
-        controller: _scrollController,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Container(
-              decoration: const BoxDecoration(
-                color: Constants.primaryColor,
-              ),
-              child: Column(
-                children: [
-                  // #post_image
-                  AspectRatio(
-                    aspectRatio: 1,
-                    child: Container(
-                      child: videoPlayer(context, controller!),
-                    ),
-                  ),
-                  const SizedBox(height: 15),
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 15, vertical: 0),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Constants.themeColor.withOpacity(0.10),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: TextButton.icon(
-                              onPressed: () {
-                                // DownloaderNotifier.downloader(
-                                //     imgUrl, "tes1", "tes32t", context);
-                              },
-                              icon: const Icon(Icons.download_rounded),
-                              label: Text(
-                                "Download",
-                                style: const TextStyle(fontSize: 16),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  // #profile_info
-                  ListTile(
-                      title: Row(
-                        children: [
-                          Text("by"),
-                          const SizedBox(width: 4),
-                          GestureDetector(
-                            onTap: () {},
-                            child: Text(
-                              "Abuzer",
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          const SizedBox(width: 3),
-                          Text(
-                            progressString,
-                            style: const TextStyle(
-                                fontSize: 13, color: Colors.grey),
-                          ),
-                        ],
-                      ),
-                      trailing: TextButton(
-                        onPressed: (() {}),
-                        child: const Text(
-                          "Follow",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
-                          ),
-                        ),
-                      )),
-                  const SizedBox(height: 5),
-                ],
+    return FutureBuilder(
+      future: DetailPageCalls.getPost(widget.postModel.id!),
+      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+        if (snapshot.connectionState == ConnectionState.done &&
+            snapshot.data != null) {
+          return Scaffold(
+            extendBodyBehindAppBar: true,
+            backgroundColor: Colors.transparent,
+            floatingActionButtonLocation: FloatingActionButtonLocation.startTop,
+            floatingActionButton: GestureDetector(
+              onTap: () {
+                Navigator.pop(context);
+              },
+              child: Container(
+                margin: const EdgeInsets.only(top: 10),
+                height: 40,
+                width: 40,
+                decoration: const BoxDecoration(
+                    shape: BoxShape.circle, color: Colors.black54),
+                child: const Icon(Icons.chevron_left, color: Colors.white),
               ),
             ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-              decoration: const BoxDecoration(
-                color: Constants.primaryColor,
-              ),
+            appBar: AppBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              leading: Container(),
+              toolbarHeight: 0,
+            ),
+            body: SingleChildScrollView(
+              controller: _scrollController,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Text("More this category",
-                      style: const TextStyle(
-                          fontSize: 18, fontWeight: FontWeight.w600)),
-                  MasonryGridView.count(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: 8,
-                      crossAxisCount: 3,
-                      primary: false,
-                      mainAxisSpacing: Constants.gridSpacing,
-                      crossAxisSpacing: Constants.gridSpacing,
-                      itemBuilder: (context, index) {
-                        return AspectRatio(
-                          aspectRatio: 0.571,
-                          child: GeneralWidgets.storyVideo(
-                            context,
-                            size,
-                            null,
-                            null,
-                            widget.postModel,
-                            viewer,
-                            showCategory: false,
-                          ),
-                        );
-                      }),
-                  (isLoading || isLoadPage)
-                      ? const Center(child: CircularProgressIndicator())
-                      : const SizedBox.shrink(),
+                  Container(
+                    decoration: const BoxDecoration(
+                      color: Constants.primaryColor,
+                    ),
+                    child: Column(
+                      children: [
+                        // #post_image
+                        snapshot.data.isVideo
+                            ? Container(
+                                child: videoPlayer(context, controller!),
+                              )
+                            : Container(
+                                child: ViewImage(
+                                  url: snapshot.data.link,
+                                ),
+                              ),
+                        const SizedBox(height: 5),
+
+                        // #profile_info
+                        ListTile(
+                            title: Row(
+                              children: [
+                                const Text("by"),
+                                const SizedBox(width: 4),
+                                GestureDetector(
+                                  onTap: () {},
+                                  // ignore: prefer_const_constructors
+                                  child: Text(
+                                    snapshot.data.user.username,
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                                const SizedBox(width: 3),
+                                Text(
+                                  progressString,
+                                  style: const TextStyle(
+                                      fontSize: 13, color: Colors.grey),
+                                ),
+                              ],
+                            ),
+                            trailing: TextButton(
+                              onPressed: (() {}),
+                              child: const Text(
+                                "Follow",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            )),
+                        const SizedBox(height: 5),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 15),
+                    decoration: const BoxDecoration(
+                      color: Constants.primaryColor,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        // ignore: prefer_const_constructors
+                        Text("More this category",
+                            style: const TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.w600)),
+                        SizedBox(height: 8),
+                        FutureBuilder(
+                          future: DetailPageCalls.getCategory(
+                              snapshot.data.category[0].id),
+                          builder: (BuildContext context,
+                              AsyncSnapshot<dynamic> snapshot) {
+                            if (snapshot.connectionState ==
+                                    ConnectionState.done &&
+                                snapshot.data != null) {
+                              return GridView.builder(
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: viewer ? 2 : 3,
+                                  childAspectRatio: 0.571,
+                                  crossAxisSpacing: Constants.gridSpacing,
+                                  mainAxisSpacing: Constants.gridSpacing,
+                                ),
+                                shrinkWrap: true,
+                                primary: false,
+                                itemCount: snapshot.data.length,
+                                itemBuilder: (context, index) {
+                                  return AspectRatio(
+                                    aspectRatio: 0.571,
+                                    child: ProfilePostWidgets.postProfileWidget(
+                                        context,
+                                        size,
+                                        MiniPost(
+                                            id: snapshot.data[index].id,
+                                            link: snapshot.data[index].link,
+                                            title: snapshot.data[index].title,
+                                            isVideo:
+                                                snapshot.data[index].isVideo),
+                                        viewer),
+                                  );
+                                },
+                              );
+                            } else {
+                              return LoadingIndicator();
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                  )
                 ],
               ),
-            )
-          ],
-        ),
-      ),
+            ),
+          );
+        } else {
+          return const LoadingIndicator(
+            text: "Loading",
+          );
+        }
+      },
     );
   }
 }

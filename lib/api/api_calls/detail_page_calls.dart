@@ -1,16 +1,13 @@
 import 'dart:ffi';
-import 'dart:html';
 
 import 'package:dio/dio.dart';
 import 'package:fake_story/data/model/categoryGetModel.dart';
-import 'package:fake_story/data/model/categorymodel.dart';
 import 'package:fake_story/data/model/postmodel.dart';
 import 'package:fake_story/data/model/user_model.dart';
-import 'package:fake_story/utils/shared_prefs_ext.dart';
 import 'package:logger/logger.dart';
 
 class DetailPageCalls {
-  static String BASEURL = "http://185.174.61.27:8000/";
+  static String BASEURL = "http://185.174.61.27:8888/";
 
   static Future<void> followUser(String userId, String? token) async {
     var logger = Logger();
@@ -48,10 +45,10 @@ class DetailPageCalls {
     //  logger.i(user.firstName);
   }
 
-  static Future<List<PostModel>?> getCategory(String categoryid) async {
+  static Future<List<PostModel>?> getCategory(int categoryid) async {
     var dio = Dio();
     Response response;
-    response = await dio.get(BASEURL + "app/category/" + categoryid);
+    response = await dio.get(BASEURL + "app/category/" + categoryid.toString());
 
     print('Response status: ${response.statusCode}');
     print('Response body: ${response.data}');
@@ -97,10 +94,14 @@ class DetailPageCalls {
     return result;
   }
 
-  static Future<PostModel?> getPost(String postid) async {
+  static Future<PostModel?> getPost(int postid) async {
+    var logger = Logger();
+
     var dio = Dio();
     Response response;
-    response = await dio.get(BASEURL + "app/post/" + postid);
+    logger.i("getPost calisti ");
+    response = await dio.get(BASEURL + "app/post/" + postid.toString());
+    logger.i("getPost calisti 2");
     print('Response status: ${response.statusCode}');
     print('Response body: ${response.data}');
     var post = PostModel.fromJson(response.data);
@@ -240,24 +241,6 @@ class DetailPageCalls {
     print('Response status: ${response.statusCode}');
     print('Response body: ${response.data}');
     var user = PostModel.fromJson(response.data);
-    return user;
-  }
-
-  static Future<ProfileRelate> profilPhotoUpload(String filepath) async {
-    // shared pref ten token cekilecek burada
-    //File alınacak yada path burada yükleme işlemi olacak profile photo
-    var token =
-        "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjo1MjQ5NDYwOTY1LCJpYXQiOjE2NDk0NjA5NjUsImp0aSI6ImNkYTllZTA3ZDQxYjRiNzc4YzI3YzY1N2Q3MjY0YzcwIiwidXNlcl9pZCI6OH0.NJnUXmslXZ3PklaK7GZg7h0GrGP8RpImhvFSXrFN_jo";
-    var dio = Dio();
-    Response response;
-    dio.options.headers["Authorization"] = 'Bearer $token';
-    var formData = FormData.fromMap({
-      'file': await MultipartFile.fromFile('./text.txt', filename: 'upload.txt')
-    });
-    response = await dio.put(BASEURL + "user/me/", data: formData);
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.data}');
-    var user = ProfileRelate.fromJson(response.data);
     return user;
   }
 
