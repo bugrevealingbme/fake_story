@@ -1,9 +1,17 @@
+import 'package:fake_story/api/api_calls/home_calls.dart';
 import 'package:fake_story/utils/app_constans.dart';
 import 'package:fake_story/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:fake_story/utils/shared_prefs_ext.dart';
+import 'package:get/get.dart';
+import 'package:logger/logger.dart';
 
+import '../api/api_calls/detail_page_calls.dart';
+import '../bloc/getx/getx_controller.dart';
+import '../components/profile/profile_post_widget.dart';
+import '../data/model/usermodel.dart';
 import '../languages.dart';
+import '../widgets/loading.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({Key? key}) : super(key: key);
@@ -17,7 +25,10 @@ class _SearchPageState extends State<SearchPage>
   bool viewer = false;
   late TabController _tabController;
   String suffixText = "EN";
+  String searchText = "";
+  List<MiniPost> miniList = [];
 
+  final Controller controller = Get.put(Controller());
   @override
   void initState() {
     _tabController = TabController(vsync: this, initialIndex: 0, length: 3);
@@ -26,9 +37,16 @@ class _SearchPageState extends State<SearchPage>
   }
 
   @override
+  void dispose() {
+    miniList.clear();
+    controller.setMiniSearchPostList(miniList);
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-
+    var logger = Logger();
     return Scaffold(
       backgroundColor: Constants.primaryColor,
       appBar: AppBar(
@@ -67,53 +85,96 @@ class _SearchPageState extends State<SearchPage>
                         ),
                         filled: true,
                         fillColor: Theme.of(context).cardColor,
-                        prefixIcon: Icon(
+                        prefixIcon: const Icon(
                           Icons.search,
                           color: Color(0xff8f8f8f),
                         ),
-                        suffixText: suffixText,
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            Icons.arrow_drop_down,
-                            color: Color(0xff8f8f8f),
-                          ),
-                          onPressed: () {
-                            showDialog(
-                                context: context,
-                                builder: (BuildContext context) =>
-                                    _buildPopupDialog(context));
-                          },
-                        ),
+                        // suffixText: suffixText,
+                        // suffixIcon: IconButton(
+                        //   icon: const Icon(
+                        //     Icons.arrow_drop_down,
+                        //     color: const Color(0xff8f8f8f),
+                        //   ),
+                        //   onPressed: () {
+                        //     showDialog(
+                        //         context: context,
+                        //         builder: (BuildContext context) =>
+                        //             _buildPopupDialog(context));
+                        //   },
+                        // ),
                       ),
-                      onChanged: (val) {},
+                      onChanged: (val) {
+                        if (val.length > 2) {
+                          setState(() {
+                            searchText = val;
+                          });
+                          _tabController.index = 0;
+                          HomeCall.getSearchPostList(
+                                  val, false, "created_at", true)
+                              .then((value) => {
+                                    if (value != null)
+                                      {
+                                        miniList.clear(),
+                                        for (var item in value)
+                                          {
+                                            miniList.add(MiniPost(
+                                                id: item.id,
+                                                link: item.link,
+                                                title: item.title,
+                                                isVideo: item.isVideo))
+                                          },
+                                        controller
+                                            .setMiniSearchPostList(miniList)
+                                      }
+                                  });
+                        } else if (val.isEmpty) {
+                          miniList.clear();
+                          controller.setMiniSearchPostList(miniList);
+                        }
+                      },
                     ),
                   ),
                   const SizedBox(width: 10),
                   TextButton(
                       onPressed: () {
+                        miniList.clear();
                         Navigator.of(context).pop();
                       },
-                      child: Text(
+                      child: const Text(
                         "Cancel",
                         style: TextStyle(fontSize: 16),
                       )),
                 ],
               ),
-              const SizedBox(height: 30),
-              GeneralWidgets.crtLabel('Categories'),
-              const SizedBox(height: 15),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    GeneralWidgets.categoryC("Girls"),
-                    GeneralWidgets.categoryC("Travel"),
-                    GeneralWidgets.categoryC("Holiday"),
-                    GeneralWidgets.categoryC("Sports"),
-                  ],
-                ),
-              ),
+              //const SizedBox(height: 30),
+              // GeneralWidgets.crtLabel('Categories'),
+              // const SizedBox(height: 15),
+              // FutureBuilder(
+              //   future: HomeCall.getListCategory(),
+              //   builder:
+              //       (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+              //     if (snapshot.data != null &&
+              //         snapshot.connectionState == ConnectionState.done) {
+              //       List<Widget> categoryList = [];
+              //       for (var item in snapshot.data) {
+              //         categoryList.add(GeneralWidgets.categoryC(item.title));
+              //       }
+              //       if (categoryList.isNotEmpty) {
+              //         return SingleChildScrollView(
+              //           scrollDirection: Axis.horizontal,
+              //           child: Row(
+              //             crossAxisAlignment: CrossAxisAlignment.start,
+              //             children: categoryList,
+              //           ),
+              //         );
+              //       } else {
+              //         return Container();
+              //       }
+              //     } else {
+              //       return Container();
+              //     }
+              //   },
+              // ),
               const SizedBox(height: 30),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -127,7 +188,7 @@ class _SearchPageState extends State<SearchPage>
                       controller: _tabController,
                       indicator: BoxDecoration(
                         borderRadius: BorderRadius.circular(100),
-                        color: Color(0xfff0dff3),
+                        color: const Color(0xfff0dff3),
                       ),
                       labelPadding: const EdgeInsets.symmetric(
                           horizontal: 15, vertical: 0),
@@ -142,14 +203,99 @@ class _SearchPageState extends State<SearchPage>
                       unselectedLabelStyle: const TextStyle(
                           fontSize: 16, fontWeight: FontWeight.w500),
                       isScrollable: true,
+                      onTap: (index) {
+                        print(index);
+                        switch (index) {
+                          case 0:
+                            if (searchText.length > 2) {
+                              HomeCall.getSearchPostList(
+                                      searchText, false, "created_at", true)
+                                  .then((value) => {
+                                        if (value != null)
+                                          {
+                                            miniList.clear(),
+                                            for (var item in value)
+                                              {
+                                                miniList.add(MiniPost(
+                                                    id: item.id,
+                                                    link: item.link,
+                                                    title: item.title,
+                                                    isVideo: item.isVideo))
+                                              },
+                                            controller
+                                                .setMiniSearchPostList(miniList)
+                                          }
+                                      });
+                            } else if (searchText.isEmpty) {
+                              miniList.clear();
+                              controller.setMiniSearchPostList(miniList);
+                            }
+
+                            break;
+
+                          case 1:
+                            if (searchText.length > 2) {
+                              HomeCall.getSearchPostList(
+                                      searchText, true, "created_at", false)
+                                  .then((value) => {
+                                        if (value != null)
+                                          {
+                                            miniList.clear(),
+                                            for (var item in value)
+                                              {
+                                                miniList.add(MiniPost(
+                                                    id: item.id,
+                                                    link: item.link,
+                                                    title: item.title,
+                                                    isVideo: item.isVideo))
+                                              },
+                                            controller
+                                                .setMiniSearchPostList(miniList)
+                                          }
+                                      });
+                            } else if (searchText.isEmpty) {
+                              miniList.clear();
+                              controller.setMiniSearchPostList(miniList);
+                            }
+                            break;
+                          case 2:
+                            if (searchText.length > 2) {
+                              HomeCall.getSearchPostList(
+                                      searchText, false, "created_at", false)
+                                  .then((value) => {
+                                        if (value != null)
+                                          {
+                                            miniList.clear(),
+                                            for (var item in value)
+                                              {
+                                                miniList.add(MiniPost(
+                                                    id: item.id,
+                                                    link: item.link,
+                                                    title: item.title,
+                                                    isVideo: item.isVideo))
+                                              },
+                                            controller
+                                                .setMiniSearchPostList(miniList)
+                                          }
+                                      });
+                            } else if (searchText.isEmpty) {
+                              miniList.clear();
+                              controller.setMiniSearchPostList(miniList);
+                            }
+                            break;
+
+                          default:
+                        }
+                      },
+                      // ignore: prefer_const_literals_to_create_immutables
                       tabs: <Widget>[
-                        Tab(
+                        const Tab(
                           text: "All",
                         ),
-                        Tab(
+                        const Tab(
                           text: "Videos",
                         ),
-                        Tab(
+                        const Tab(
                           text: "Photos",
                         ),
                       ],
@@ -167,28 +313,33 @@ class _SearchPageState extends State<SearchPage>
                 ],
               ),
               const SizedBox(height: 15),
-              GridView.count(
-                crossAxisCount: viewer ? 2 : 3,
-                childAspectRatio: 0.571,
-                shrinkWrap: true,
-                primary: false,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-                children: <Widget>[
-                  GeneralWidgets.storyVideo(
-                      context, size, "asdsa", null, null, viewer,
-                      showCategory: false),
-                  GeneralWidgets.storyVideo(
-                      context, size, "asdsa", null, null, viewer,
-                      showCategory: false),
-                  GeneralWidgets.storyVideo(
-                      context, size, "asdsa", null, null, viewer,
-                      showCategory: false),
-                  GeneralWidgets.storyVideo(
-                      context, size, "asdsa", null, null, viewer,
-                      showCategory: false),
-                ],
-              ),
+              Obx(() => GridView.builder(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: viewer ? 2 : 3,
+                      childAspectRatio: 0.571,
+                      crossAxisSpacing: Constants.gridSpacing,
+                      mainAxisSpacing: Constants.gridSpacing,
+                    ),
+                    shrinkWrap: true,
+                    primary: false,
+                    itemCount: controller.miniSerachPostList.length,
+                    itemBuilder: (context, index) {
+                      return AspectRatio(
+                        aspectRatio: 0.571,
+                        child: ProfilePostWidgets.postProfileWidget(
+                            context,
+                            size,
+                            MiniPost(
+                                id: controller.miniSerachPostList[index].id,
+                                link: controller.miniSerachPostList[index].link,
+                                title:
+                                    controller.miniSerachPostList[index].title,
+                                isVideo: controller
+                                    .miniSerachPostList[index].isVideo),
+                            viewer),
+                      );
+                    },
+                  )),
             ],
           ),
         ),

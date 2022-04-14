@@ -1,4 +1,6 @@
+import 'package:fake_story/api/api_calls/profil_page_calls.dart';
 import 'package:fake_story/bloc/getx/user_state_enum.dart';
+import 'package:fake_story/data/model/profilemodel.dart';
 import 'package:fake_story/data/model/usermodel.dart';
 import 'package:fake_story/utils/shared_prefs_ext.dart';
 import 'package:get/get.dart';
@@ -20,7 +22,10 @@ class Controller extends GetxController {
   changeLanguage(String newLanguage) => language.value = newLanguage;
 
   var postLanguage = "".obs;
-  changePostLanguage(String newLanguage) => postLanguage.value = newLanguage;
+  changePostLanguage(String newLanguage) => {
+        postLanguage.value = newLanguage,
+        ProfilCalss.userProfileUpdate({"language": newLanguage}),
+      };
 
   var isUserLogin = false.obs;
   setUserLoginState() async =>
@@ -49,4 +54,13 @@ class Controller extends GetxController {
   var miniSerachPostList = [].obs;
   setMiniSearchPostList(List<MiniPost> post) =>
       {miniSerachPostList.clear(), miniSerachPostList.addAll(post)};
+
+  var isVideo = true.obs;
+  setHomeTabIsVideo(int value) {
+    if (value == 0) {
+      isVideo.value = true;
+    } else {
+      isVideo.value = false;
+    }
+  }
 }

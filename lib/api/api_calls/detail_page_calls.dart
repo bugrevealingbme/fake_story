@@ -156,22 +156,6 @@ class DetailPageCalls {
     }
   }
 
-  static Future<ProfileRelate> userProfileUpdate(dynamic data) async {
-    //update edilecek yer {"profileimage":"http://enesakoluk.ml/1" ,"bio":"testbio"} bu şekilde butun modelden gelebilir
-    // shared pref ten token cekilecek burada
-    var token =
-        "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjo1MjQ5NDYwOTY1LCJpYXQiOjE2NDk0NjA5NjUsImp0aSI6ImNkYTllZTA3ZDQxYjRiNzc4YzI3YzY1N2Q3MjY0YzcwIiwidXNlcl9pZCI6OH0.NJnUXmslXZ3PklaK7GZg7h0GrGP8RpImhvFSXrFN_jo";
-    var dio = Dio();
-    Response response;
-    dio.options.headers["Authorization"] = 'Bearer $token';
-    response = await dio.patch(BASEURL + "user/me/", data: data);
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.data}');
-
-    var user = ProfileRelate.fromJson(response.data);
-    return user;
-  }
-
   static Future<UserModel> anotheruserInformations(int anotheruserid) async {
     // shared pref ten token cekilecek burada
     var token =

@@ -3,6 +3,7 @@ import 'package:fake_story/data/model/postmodel.dart';
 import 'package:fake_story/screens/category.dart';
 import 'package:fake_story/screens/search_page.dart';
 import 'package:fake_story/screens/settings_page.dart';
+import 'package:fake_story/screens/splash_screen.dart';
 import 'package:fake_story/utils/app_constans.dart';
 import 'package:fake_story/widgets/grid_gallery.dart';
 import 'package:fake_story/widgets/navbar.dart';
@@ -23,10 +24,10 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  bool isVideo = true;
 
   @override
   void initState() {
-    final Controller controller = Get.put(Controller());
     _tabController = TabController(vsync: this, initialIndex: 0, length: 2);
     //context.read<UserCubit>().createToken("username", "123enes1");
 
@@ -129,6 +130,8 @@ class _MyHomePageState extends State<MyHomePage>
                           unselectedLabelStyle: const TextStyle(
                               fontSize: 10, fontWeight: FontWeight.w400),
                           isScrollable: true,
+                          onTap: (index) =>
+                              {controller.setHomeTabIsVideo(index)},
                           tabs: <Widget>[
                             Tab(
                               text: "videos".tr,
@@ -297,7 +300,7 @@ class _HomeVideosViewState extends State<HomeVideosView>
                   )),
                 ),
                 FutureBuilder(
-                  future: HomeCall.getListCategory(Get.deviceLocale.toString()),
+                  future: HomeCall.getListCategory(),
                   builder:
                       (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
                     List<Widget> categoryList = [
@@ -328,17 +331,35 @@ class _HomeVideosViewState extends State<HomeVideosView>
                                   }),
                                   if (value == 0)
                                     {
-                                      print("index 0 veya 1"),
-                                      HomeCall.getSearchPostList(
-                                              "", true, "like", "tr_TR")
-                                          .then((item) => controller
-                                              .addPostVideoList(item!))
+                                      if (controller.isVideo.value)
+                                        {
+                                          HomeCall.getSearchPostList(
+                                                  "", true, "stream", false)
+                                              .then((item) => controller
+                                                  .addPostVideoList(item!))
+                                        }
+                                      else
+                                        {
+                                          HomeCall.getSearchPostList(
+                                                  "", false, "stream", false)
+                                              .then((item) => controller
+                                                  .addPostVideoList(item!))
+                                        }
                                     }
                                   else if (value == 1)
                                     {
-                                      HomeCall.getFollowUserPostList(true).then(
-                                          (value) => controller
-                                              .addPostVideoList(value!))
+                                      if (controller.isVideo.value)
+                                        {
+                                          HomeCall.getFollowUserPostList(true)
+                                              .then((value) => controller
+                                                  .addPostVideoList(value!))
+                                        }
+                                      else
+                                        {
+                                          HomeCall.getFollowUserPostList(false)
+                                              .then((value) => controller
+                                                  .addPostVideoList(value!))
+                                        }
                                     }
                                   else
                                     {
@@ -406,7 +427,7 @@ class _HomeVideosViewState extends State<HomeVideosView>
             ),
             const SizedBox(height: 20),
             FutureBuilder(
-              future: HomeCall.getSearchPostList("", true, "stream", "tr_TR")
+              future: HomeCall.getSearchPostList("", true, "stream", false)
                   .then((value) => {
                         controller.addPostVideoList(value!),
                       }),
@@ -414,7 +435,7 @@ class _HomeVideosViewState extends State<HomeVideosView>
                 if (controller.postVideoList.isNotEmpty) {
                   var logger = Logger();
                   logger.i(" data dolu video");
-                  logger.i(controller.postVideoList[0].link);
+                  logger.i(controller.isUserLogin.value);
                   if (pagesize == 1 && !controller.isUserLogin.value) {
                     return forceLogin(context);
                   } else {
@@ -444,7 +465,11 @@ class _HomeVideosViewState extends State<HomeVideosView>
                 } else {
                   var logger = Logger();
                   logger.i(" data bos video");
-                  return Container();
+                  if (pagesize == 1 && !controller.isUserLogin.value) {
+                    return forceLogin(context);
+                  } else {
+                    return Container();
+                  }
                 }
               },
             ),
@@ -476,7 +501,7 @@ class _HomePhotosViewState extends State<HomePhotosView>
   photoBuble(Size size, String category, viewer) {
     final Controller controller = Get.put(Controller());
     return FutureBuilder(
-      future: HomeCall.getSearchPostList("", false, "like", "tr_TR")
+      future: HomeCall.getSearchPostList("", false, "stream", false)
           .then((value) => {controller.addPostList(value!)}),
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
         if (controller.postList.isNotEmpty) {
@@ -495,7 +520,12 @@ class _HomePhotosViewState extends State<HomePhotosView>
                 itemCount: controller.postList.length,
                 itemBuilder: (BuildContext context, int index) {
                   return GeneralWidgets.storyPhoto(
-                      size, viewer, controller.postList[index].link,
+                      context,
+                      size,
+                      controller.postList[index].link,
+                      controller.postList[index].createdAt,
+                      controller.postList[index],
+                      viewer,
                       showCategory: false);
                 },
               ));
@@ -564,7 +594,7 @@ class _HomePhotosViewState extends State<HomePhotosView>
                   )),
                 ),
                 FutureBuilder(
-                  future: HomeCall.getListCategory("tr_TR"),
+                  future: HomeCall.getListCategory(),
                   builder:
                       (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
                     List<Widget> list = [
@@ -594,7 +624,7 @@ class _HomePhotosViewState extends State<HomePhotosView>
                                     {
                                       print("index 0 veya 1"),
                                       HomeCall.getSearchPostList(
-                                              "", false, "like", "tr_TR")
+                                              "", false, "stream", false)
                                           .then((item) =>
                                               controller.addPostList(item!))
                                     }
@@ -669,7 +699,7 @@ class _HomePhotosViewState extends State<HomePhotosView>
               ],
             ),
             const SizedBox(height: 10),
-            photoBuble(size, 'Cars', viewer),
+            photoBuble(size, '', viewer),
             const SizedBox(height: 10),
           ],
         ),

@@ -4,6 +4,7 @@ import 'package:fake_story/api/api_calls/profil_page_calls.dart';
 import 'package:fake_story/components/profile/profile_post_widget.dart';
 import 'package:fake_story/utils/app_constans.dart';
 import 'package:fake_story/widgets/loading.dart';
+import 'package:fake_story/widgets/require_login.dart';
 import 'package:fake_story/widgets/widgets.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -112,9 +113,7 @@ class _ProfilePageState extends State<ProfilePage>
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-    var likedLength = 0;
-    var savedLength = 0;
-    var uploadsLength = 0;
+
     return Scaffold(
       backgroundColor: Constants.primaryColor,
       appBar: AppBar(
@@ -151,12 +150,10 @@ class _ProfilePageState extends State<ProfilePage>
                     }),
                 builder:
                     (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done) {
+                  if (snapshot.connectionState == ConnectionState.done &&
+                      snapshot.data != null) {
                     var logger = Logger();
 
-                    likedLength = controller.userModel[0].likeRelated.length;
-                    savedLength = controller.userModel[0].favoriRelated.length;
-                    uploadsLength = controller.userModel[0].postRelated.length;
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -419,7 +416,7 @@ class _ProfilePageState extends State<ProfilePage>
                             AsyncSnapshot<dynamic> snapshot) {
                           if (controller.userModel.isNotEmpty) {
                             var logger = Logger();
-
+                            logger.i("profil data dolu");
                             return Obx(() => GridView.builder(
                                   gridDelegate:
                                       SliverGridDelegateWithFixedCrossAxisCount(
@@ -433,23 +430,31 @@ class _ProfilePageState extends State<ProfilePage>
                                   itemCount: controller.miniPostList.length,
                                   itemBuilder:
                                       (BuildContext context, int index) {
-                                    return ProfilePostWidgets.postProfileWidget(
-                                        context,
-                                        size,
-                                        controller.miniPostList[index],
-                                        viewer);
+                                    if (controller.isUserLogin.value) {
+                                      return ProfilePostWidgets
+                                          .postProfileWidget(
+                                              context,
+                                              size,
+                                              controller.miniPostList[index],
+                                              viewer);
+                                    } else {
+                                      return forceLogin(context);
+                                    }
                                   },
                                 ));
                           } else {
-                            return Container(
-                              child: Text("asd"),
-                            );
+                            logger.i("profil data bos");
+                            return const Text("asd");
                           }
                         })
                       ],
                     );
                   } else {
-                    return Center(child: const LoadingIndicator());
+                    if (controller.isUserLogin.value) {
+                      return const Center(child: LoadingIndicator());
+                    } else {
+                      return forceLogin(context);
+                    }
                   }
                 })),
       ),

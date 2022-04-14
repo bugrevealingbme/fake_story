@@ -42,7 +42,7 @@ class _LoadingIndicatorState extends State<LoadingIndicator> {
   Widget build(BuildContext context) {
     var displayedText = widget.text;
     return Container(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         color: Colors.transparent,
         child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -58,14 +58,14 @@ class _LoadingIndicatorState extends State<LoadingIndicator> {
   Padding _getLoadingIndicator() {
     return Padding(
         child: Container(
-            child: CircularProgressIndicator(strokeWidth: 3),
+            child: const CircularProgressIndicator(strokeWidth: 3),
             width: 32,
             height: 32),
-        padding: EdgeInsets.only(bottom: 16));
+        padding: const EdgeInsets.only(bottom: 16));
   }
 
   Widget _getHeading(context) {
-    return Padding(
+    return const Padding(
         child: Text(
           'Loading...',
           style: TextStyle(color: Colors.black, fontSize: 16),
@@ -77,7 +77,7 @@ class _LoadingIndicatorState extends State<LoadingIndicator> {
   Text _getText(String displayedText) {
     return Text(
       displayedText,
-      style: TextStyle(color: Colors.white, fontSize: 14),
+      style: const TextStyle(color: Colors.black, fontSize: 14),
       textAlign: TextAlign.center,
     );
   }
@@ -90,7 +90,7 @@ class _LoadingIndicatorState extends State<LoadingIndicator> {
 
   Widget _getTimeout(bool timeoutStatus, int timeoutcounter) {
     if (timeoutStatus) {
-      return TextButton(onPressed: () => close(), child: _getText("İptal et"));
+      return TextButton(onPressed: () => close(), child: _getText("Cancel"));
     } else {
       return Padding(
         padding: const EdgeInsets.all(8.0),

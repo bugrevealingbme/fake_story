@@ -1,9 +1,12 @@
 // ignore_for_file: deprecated_member_use
 
+import 'package:fake_story/api/api_calls/profil_page_calls.dart';
 import 'package:fake_story/bloc/getx/getx_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:settings_ui/settings_ui.dart';
+
+import '../data/model/usermodel.dart';
 
 class SettingsPage extends StatefulWidget {
   SettingsPage({Key? key}) : super(key: key);
@@ -12,9 +15,24 @@ class SettingsPage extends StatefulWidget {
   State<SettingsPage> createState() => _SettingsPageState();
 }
 
+UserModel? userModel;
 var isToggle = false;
 
 class _SettingsPageState extends State<SettingsPage> {
+  @override
+  void initState() {
+    getUser();
+    super.initState();
+  }
+
+  void getUser() async {
+    var response = await ProfilCalss.userInformations();
+
+    setState(() {
+      userModel = response;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final Controller controller = Get.put(Controller());
@@ -33,12 +51,6 @@ class _SettingsPageState extends State<SettingsPage> {
                             _buildPopupDialog(context, true))),
                 value: Obx(() => Text(controller.language.value))),
             SettingsTile.navigation(
-              title: const Divider(
-                thickness: 2,
-                color: Colors.black,
-              ),
-            ),
-            SettingsTile.navigation(
                 leading: const Icon(Icons.language),
                 title: InkWell(
                     child: const Text('Post Language'),
@@ -47,24 +59,12 @@ class _SettingsPageState extends State<SettingsPage> {
                         builder: (BuildContext context) =>
                             _buildPopupDialog(context, false))),
                 value: Obx(() => Text(controller.postLanguage.value))),
-            SettingsTile.navigation(
-              title: const Divider(
-                thickness: 2,
-                color: Colors.black,
-              ),
-            ),
             SettingsTile.switchTile(
               onToggle: (value) {},
               initialValue: isToggle,
               enabled: false,
               leading: const Icon(Icons.format_paint),
               title: const Text('Enable dark theme'),
-            ),
-            SettingsTile.navigation(
-              title: const Divider(
-                thickness: 2,
-                color: Colors.black,
-              ),
             ),
             SettingsTile.navigation(
               leading: const Icon(Icons.contact_page),
@@ -77,12 +77,6 @@ class _SettingsPageState extends State<SettingsPage> {
               value: const Text('Contact@gmail.com'),
             ),
             SettingsTile.navigation(
-              title: const Divider(
-                thickness: 2,
-                color: Colors.black,
-              ),
-            ),
-            SettingsTile.navigation(
               leading: const Icon(Icons.contact_page),
               title: InkWell(
                   child: const Text('Other Apps'),
@@ -91,12 +85,6 @@ class _SettingsPageState extends State<SettingsPage> {
                       builder: (BuildContext context) =>
                           _buildPopupDialog(context, true))),
               value: const Text('Show our apps'),
-            ),
-            SettingsTile.navigation(
-              title: const Divider(
-                thickness: 2,
-                color: Colors.black,
-              ),
             ),
             SettingsTile.navigation(
               // ignore: prefer_const_constructors
@@ -121,7 +109,6 @@ class _SettingsPageState extends State<SettingsPage> {
 Widget _buildPopupDialog(BuildContext context, bool isAppLanguage) {
   final List<String> _languages = [
     'English',
-    '日本語',
     'Turkish',
   ];
   final Controller controller = Get.put(Controller());
@@ -144,21 +131,16 @@ Widget _buildPopupDialog(BuildContext context, bool isAppLanguage) {
                         case "English":
                           isAppLanguage
                               ? controller.changeLanguage("English")
-                              : controller.changePostLanguage("English");
+                              : controller.changePostLanguage("en_EN");
                           Navigator.of(context).pop();
                           break;
                         case "Turkish":
                           isAppLanguage
                               ? controller.changeLanguage("Turkish")
-                              : controller.changePostLanguage("Turkish");
+                              : controller.changePostLanguage("tr_TR");
                           Navigator.of(context).pop();
                           break;
-                        case "日本語":
-                          isAppLanguage
-                              ? controller.changeLanguage("日本語")
-                              : controller.changePostLanguage("日本語");
-                          Navigator.of(context).pop();
-                          break;
+
                         default:
                       }
                     },

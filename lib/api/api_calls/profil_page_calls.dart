@@ -63,4 +63,20 @@ class ProfilCalss {
     var user = ProfileRelate.fromJson(response.data);
     return user;
   }
+
+  static Future<ProfileRelate> userProfileUpdate(dynamic data) async {
+    //update edilecek yer {"profileimage":"http://enesakoluk.ml/1" ,"bio":"testbio"} bu şekilde butun modelden gelebilir
+    // shared pref ten token cekilecek burada
+    var token = await CustomSharedPref.readStringDataToLanguage("accessToken");
+
+    var dio = Dio();
+    Response response;
+    dio.options.headers["Authorization"] = 'Bearer $token';
+    response = await dio.patch(BASEURL + "user/me/", data: data);
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.data}');
+
+    var user = ProfileRelate.fromJson(response.data);
+    return user;
+  }
 }

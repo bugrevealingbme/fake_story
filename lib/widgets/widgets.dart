@@ -803,58 +803,76 @@ class GeneralWidgets {
     );
   }
 
-  static storyPhoto(Size size, viewer, String? contentLink,
-      {bool showCategory = true}) {
-    return SizedBox(
-      width: size.width / 2,
-      child: Stack(
-        children: [
-          Positioned(
-            left: 0,
-            right: 0,
-            top: 0,
-            bottom: 0,
-            child: Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.all(Radius.circular(10)),
-                image: DecorationImage(
-                  fit: BoxFit.cover,
-                  image: NetworkImage(
-                    contentLink!,
+  static storyPhoto(
+    context,
+    Size size,
+    String? contentLink,
+    String? createdDay,
+    PostModel? postModel,
+    viewer, {
+    bool showCategory = true,
+  }) {
+    return GestureDetector(
+      onTap: () => {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => DetailsPage(postModel: postModel!),
+          ),
+        )
+      },
+      child: SizedBox(
+        width: size.width / 2,
+        child: Stack(
+          children: [
+            Positioned(
+              left: 0,
+              right: 0,
+              top: 0,
+              bottom: 0,
+              child: Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.all(Radius.circular(10)),
+                  image: DecorationImage(
+                    fit: BoxFit.cover,
+                    image: NetworkImage(
+                      contentLink!,
+                    ),
                   ),
                 ),
-              ),
-              child: Stack(
-                children: [
-                  //category
-                  showCategory
-                      ? Positioned(
-                          left: 10,
-                          top: 10,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 5, horizontal: 6),
-                            decoration: BoxDecoration(
-                              color: const Color.fromARGB(180, 255, 255, 255),
-                              borderRadius: BorderRadius.circular(50),
-                            ),
-                            child: const Text(
-                              "Cars",
-                              style: const TextStyle(
-                                color: Color(0xff111111),
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
+                child: Stack(
+                  children: [
+                    //category
+                    showCategory
+                        ? Positioned(
+                            left: 10,
+                            top: 10,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 5, horizontal: 6),
+                              decoration: BoxDecoration(
+                                color: const Color.fromARGB(180, 255, 255, 255),
+                                borderRadius: BorderRadius.circular(50),
+                              ),
+                              child: const Text(
+                                "Cars",
+                                style: const TextStyle(
+                                  color: Color(0xff111111),
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
                             ),
-                          ),
-                        )
-                      : Container(),
-                ],
+                          )
+                        : Container(),
+                    videoBottomInfo(viewer, createdDay!, postModel),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -868,12 +886,12 @@ class GeneralWidgets {
     print(now);
     var differenceTime = now.difference(postTime).inMinutes;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      child: Column(
-        children: [
-          const Spacer(),
-          Row(
+    return Column(
+      children: [
+        const Spacer(),
+        Container(
+          color: Color.fromARGB(103, 0, 0, 0),
+          child: Row(
             children: [
               differenceTime > 180
                   ? Text(
@@ -906,9 +924,9 @@ class GeneralWidgets {
                   : Container(),
             ],
           ),
-          const SizedBox(height: 10),
-        ],
-      ),
+        ),
+        const SizedBox(height: 10),
+      ],
     );
   }
 
@@ -954,20 +972,20 @@ class GeneralWidgets {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              padding: const EdgeInsets.all(3),
-              decoration: BoxDecoration(
-                  color: Colors.white, borderRadius: BorderRadius.circular(50)),
-              child: SizedBox(
-                height: 32,
-                width: 32,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(50),
-                  child: Image.network('https://picsum.photos/850',
-                      fit: BoxFit.cover),
-                ),
-              ),
-            ),
+            // Container(
+            //   padding: const EdgeInsets.all(3),
+            //   decoration: BoxDecoration(
+            //       color: Colors.white, borderRadius: BorderRadius.circular(50)),
+            //   child: SizedBox(
+            //     height: 32,
+            //     width: 32,
+            //     child: ClipRRect(
+            //       borderRadius: BorderRadius.circular(50),
+            //       child: Image.network('https://picsum.photos/850',
+            //           fit: BoxFit.cover),
+            //     ),
+            //   ),
+            // ),
             const SizedBox(height: 10),
             SizedBox(
               height: 15,

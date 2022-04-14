@@ -1,6 +1,7 @@
 import 'dart:ffi';
 
 import 'package:dio/dio.dart';
+import 'package:fake_story/api/api_calls/profil_page_calls.dart';
 import 'package:fake_story/utils/shared_prefs_ext.dart';
 import 'package:logger/logger.dart';
 
@@ -44,20 +45,22 @@ class HomeCall {
     //  logger.i(user.firstName);
   }
 
-  static Future<List<CategoryModel>> getListCategory(String language) async {
+  static Future<List<CategoryModel>> getListCategory() async {
     var logger = Logger();
     logger.i("getListCategory girdik");
+    var userModel = await ProfilCalss.userInformations();
+    var language = userModel.profileRelate!.language;
     var dio = Dio();
     Response response;
     response = await dio.get(
-        BASEURL + 'app/category/?ordering=-stream' + "&language=" + language);
+        BASEURL + 'app/category/?ordering=-stream' + "&language=" + language!);
 
     List<CategoryModel> result = [];
     for (var item in response.data) {
       var category = CategoryModel.fromJson(item);
       result.add(category);
     }
-
+    logger.i(response.data);
     return result;
   }
 
@@ -81,20 +84,22 @@ class HomeCall {
   }
 
   static Future<List<PostModel>?> getSearchPostList(
-      String searchtxt, bool isVideo, String ordering, String language) async {
+      String searchtxt, bool isVideo, String ordering, bool isAll) async {
     // ordering kullanımı -like like stream -stream created_at -created_at
     var dio = Dio();
     Response response;
+    var userModel = await ProfilCalss.userInformations();
+    var language = userModel.profileRelate!.language;
     response = await dio.get(BASEURL +
         "app/post/?search=" +
         searchtxt +
-        "&isVideo=" +
-        isVideo.toString() +
+        (isAll ? "" : "&isVideo=" + isVideo.toString()) +
         "&ordering=" +
         ordering +
         "&language=" +
-        language);
+        language!);
     print('Response status searchPost: ${response.statusCode}');
+    print('Response status searchPost: ${response.data.length}');
 
     List<PostModel> result = [];
     for (var item in response.data) {
@@ -115,8 +120,8 @@ class HomeCall {
 
     response = await dio
         .get(BASEURL + "app/followingpost?isVideo=${isVideo.toString()}");
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.data}');
+    print('Response following status: ${response.statusCode}');
+    print('Response following body: ${response.data}');
     List<PostModel> result = [];
     for (var item in response.data) {
       var post = PostModel.fromJson(item);
