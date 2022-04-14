@@ -20,6 +20,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     controller.setUserLoginState();
+
     // TODO: delete this after test
     Future.delayed(const Duration(seconds: 3), () {
       Navigator.push(

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:fake_story/api/api_calls/upload_page_calls.dart';
+import 'package:fake_story/screens/uploadScreen.dart';
 import 'package:fake_story/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -103,18 +104,27 @@ class _GridGalleryState extends State<GridGallery>
               if (snapshot.connectionState == ConnectionState.done) {
                 return InkWell(
                   onTap: () {
+                    Navigator.of(context).pop();
+
                     asset.file.then((value) => {
-                          if (asset.type == AssetType.video)
-                            {
-                              UploadPageCalls.createPost(
-                                  value!.path, "testtt", "tr_TR", true)
-                            }
-                          else
-                            {
-                              UploadPageCalls.createPost(
-                                  value!.path, "testtt", "tr_TR", false)
-                            }
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) =>
+                                    UploadPage(filePath: value!.path),
+                              ))
+                          // if (asset.type == AssetType.video)
+                          //   {
+                          //     UploadPageCalls.createPost(
+                          //         value!.path, "testtt", "tr_TR", true)
+                          //   }
+                          // else
+                          //   {
+                          //     UploadPageCalls.createPost(
+                          //         value!.path, "testtt", "tr_TR", false)
+                          //   }
                         });
+
                     /*  setState(() {
                       Navigator.of(context).pop();
                       pickedFile = asset.file;

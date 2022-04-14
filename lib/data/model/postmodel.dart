@@ -1,5 +1,3 @@
-
-
 import 'package:fake_story/data/model/user_model.dart';
 
 import 'categorymodel.dart';
@@ -16,6 +14,7 @@ class PostModel {
   List<CategoryModel>? category;
   List<UserModel>? favori;
   String? createdAt;
+  String? description;
 
   PostModel(
       {this.id,
@@ -28,11 +27,12 @@ class PostModel {
       this.like,
       this.category,
       this.favori,
-      this.createdAt});
+      this.createdAt,
+      this.description});
 
   PostModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    user = json['user'] != null ?  UserModel.fromJson(json['user']) : null;
+    user = json['user'] != null ? UserModel.fromJson(json['user']) : null;
     isVideo = json['isVideo'];
     link = json['link'];
     language = json['language'];
@@ -41,7 +41,7 @@ class PostModel {
     if (json['like'] != null) {
       like = <UserModel>[];
       json['like'].forEach((v) {
-        like!.add( UserModel.fromJson(v));
+        like!.add(UserModel.fromJson(v));
       });
     }
     if (json['category'] != null) {
@@ -53,14 +53,15 @@ class PostModel {
     if (json['favori'] != null) {
       favori = <UserModel>[];
       json['favori'].forEach((v) {
-        favori!.add( UserModel.fromJson(v));
+        favori!.add(UserModel.fromJson(v));
       });
     }
     createdAt = json['created_at'];
+    description = json['description'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data =  Map<String, dynamic>();
+    final Map<String, dynamic> data = Map<String, dynamic>();
     data['id'] = id;
     if (user != null) {
       data['user'] = user!.toJson();
@@ -80,11 +81,7 @@ class PostModel {
       data['favori'] = favori!.map((v) => v.toJson()).toList();
     }
     data['created_at'] = createdAt;
+    data['description'] = description;
     return data;
   }
 }
-
-
-
-
- 

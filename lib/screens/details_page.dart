@@ -1,5 +1,4 @@
 import 'package:fake_story/api/api_calls/detail_page_calls.dart';
-import 'package:fake_story/api/download/download.dart';
 import 'package:fake_story/components/profile/profile_post_widget.dart';
 import 'package:fake_story/data/model/postmodel.dart';
 import 'package:fake_story/data/model/usermodel.dart';
@@ -7,10 +6,7 @@ import 'package:fake_story/screens/view_image.dart';
 import 'package:fake_story/utils/app_constans.dart';
 import 'package:fake_story/widgets/loading.dart';
 import 'package:fake_story/widgets/videoPlayer.dart';
-import 'package:fake_story/widgets/widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:logger/logger.dart';
 import 'package:video_player/video_player.dart';
 
@@ -186,6 +182,19 @@ class _DetailsPageState extends State<DetailsPage> {
                               ),
                             )),
                         const SizedBox(height: 5),
+                        // ignore: prefer_const_constructors
+                        SizedBox(
+                          width: double.infinity,
+                          // ignore: prefer_const_constructors
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 15),
+                            child: Text(
+                              snapshot.data.description,
+                              textAlign: TextAlign.start,
+                            ),
+                          ),
+                        )
                       ],
                     ),
                   ),
@@ -202,10 +211,12 @@ class _DetailsPageState extends State<DetailsPage> {
                         Text("More this category",
                             style: const TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.w600)),
-                        SizedBox(height: 8),
+                        const SizedBox(height: 8),
                         FutureBuilder(
                           future: DetailPageCalls.getCategory(
-                              snapshot.data.category[0].id),
+                              snapshot.data.category.length == 0
+                                  ? 1
+                                  : snapshot.data.category[0].id),
                           builder: (BuildContext context,
                               AsyncSnapshot<dynamic> snapshot) {
                             if (snapshot.connectionState ==
@@ -239,7 +250,7 @@ class _DetailsPageState extends State<DetailsPage> {
                                 },
                               );
                             } else {
-                              return LoadingIndicator();
+                              return const LoadingIndicator();
                             }
                           },
                         ),

@@ -1,20 +1,29 @@
 import 'package:dio/dio.dart';
+import 'package:fake_story/api/api_calls/profil_page_calls.dart';
+
+import '../../data/model/categorymodel.dart';
+import '../../utils/shared_prefs_ext.dart';
 
 class UploadPageCalls {
   static String BASEURL = "http://185.174.61.27:8888/";
   static Future<bool> createPost(
-      String filepath, String title, String language, bool isVideo) async {
+      String filepath, String title, bool isVideo, String description) async {
     // shared pref ten token cekilecek burada
     //File alınacak yada path burada yükleme işlemi olacak profile photo
-    var token =
-        "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjo1MjQ5NTQzNjA3LCJpYXQiOjE2NDk1NDM2MDcsImp0aSI6Ijc5ZGE4ZDEwZGQzNTQxYTFiYjcwOGJhY2U0MmI0MGYwIiwidXNlcl9pZCI6Mn0.GrUwwbmokE5UdLhb7XN0g-Tzf2YF7F8rIYqvne8TXLM";
+    var userModel = await ProfilCalss.userInformations();
+    var language = userModel.profileRelate!.language;
+    var token = await CustomSharedPref.readStringDataToLanguage("accessToken");
     var dio = Dio();
     Response response;
+    List<CategoryModel> test = [];
+    test.add(CategoryModel(id: 1, title: "das", language: "tr_TR"));
     dio.options.headers["Authorization"] = 'Bearer $token';
     var formData = FormData.fromMap({
       "title": title,
       "isVideo": isVideo.toString(),
       "language": language,
+      "description": description,
+      "category": test,
       'file': await MultipartFile.fromFile(filepath,
           filename: "testtt." + filepath.split('.').last)
     });
