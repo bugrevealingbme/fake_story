@@ -6,10 +6,11 @@ import 'package:fake_story/data/model/postmodel.dart';
 import 'package:fake_story/data/model/user_model.dart';
 import 'package:logger/logger.dart';
 
+import '../../utils/config.dart';
 import '../../utils/shared_prefs_ext.dart';
 
 class DetailPageCalls {
-  static String BASEURL = "http://185.174.61.27:8888/";
+  static String BASEURL = BaseUtils.getBaseUrl();
 
   static Future<void> followUser(String userId, String? token) async {
     var logger = Logger();

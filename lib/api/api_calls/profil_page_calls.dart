@@ -4,10 +4,11 @@ import 'package:logger/logger.dart';
 
 import '../../data/model/profilemodel.dart';
 import '../../data/model/usermodel.dart';
+import '../../utils/config.dart';
 import '../../utils/shared_prefs_ext.dart';
 
 class ProfilCalss {
-  static String BASEURL = "http://185.174.61.27:8888/";
+  static String BASEURL = BaseUtils.getBaseUrl();
   static Future<UserModel> userInformations() async {
     // shared pref ten token cekilecek burada
     var logger = Logger();

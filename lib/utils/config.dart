@@ -26,3 +26,9 @@ Locale _locale(String languageCode) {
       ? Locale(languageCode)
       : const Locale('en_US');
 }
+
+class BaseUtils {
+  static String getBaseUrl() {
+    return "http://185.174.61.27:8888/";
+  }
+}

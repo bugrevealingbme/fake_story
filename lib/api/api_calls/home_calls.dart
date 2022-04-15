@@ -2,6 +2,7 @@ import 'dart:ffi';
 
 import 'package:dio/dio.dart';
 import 'package:fake_story/api/api_calls/profil_page_calls.dart';
+import 'package:fake_story/utils/config.dart';
 import 'package:fake_story/utils/shared_prefs_ext.dart';
 import 'package:logger/logger.dart';
 
@@ -10,7 +11,7 @@ import '../../data/model/categorymodel.dart';
 import '../../data/model/postmodel.dart';
 
 class HomeCall {
-  static String BASEURL = "http://185.174.61.27:8888/";
+  static String BASEURL = BaseUtils.getBaseUrl();
   static Future<List<PostModel>> getAllPosts(
       String language, bool? isVideo) async {
     var logger = Logger();
