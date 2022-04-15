@@ -48,8 +48,16 @@ class HomeCall {
   static Future<List<CategoryModel>> getListCategory() async {
     var logger = Logger();
     logger.i("getListCategory girdik");
-    var userModel = await ProfilCalss.userInformations();
-    var language = userModel.profileRelate!.language;
+
+    bool islogin = await CustomSharedPref.isUserLogin();
+    var language;
+    if (islogin) {
+      var userModel = await ProfilCalss.userInformations();
+      language = userModel.profileRelate!.language;
+    } else {
+      language = "en_EN";
+    }
+
     var dio = Dio();
     Response response;
     response = await dio.get(
@@ -88,8 +96,14 @@ class HomeCall {
     // ordering kullanımı -like like stream -stream created_at -created_at
     var dio = Dio();
     Response response;
-    var userModel = await ProfilCalss.userInformations();
-    var language = userModel.profileRelate!.language;
+    bool islogin = await CustomSharedPref.isUserLogin();
+    var language;
+    if (islogin) {
+      var userModel = await ProfilCalss.userInformations();
+      language = userModel.profileRelate!.language;
+    } else {
+      language = "en_EN";
+    }
     response = await dio.get(BASEURL +
         "app/post/?search=" +
         searchtxt +

@@ -3,12 +3,16 @@ import 'dart:typed_data';
 
 import 'package:fake_story/api/api_calls/upload_page_calls.dart';
 import 'package:fake_story/screens/uploadScreen.dart';
+import 'package:fake_story/widgets/require_login.dart';
 import 'package:fake_story/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_manager/photo_manager.dart';
+
+import '../bloc/getx/getx_controller.dart';
 
 class GridGallery extends StatefulWidget {
   final ScrollController? scrollCtr;
@@ -32,13 +36,13 @@ class _GridGalleryState extends State<GridGallery>
   void initState() {
     super.initState();
 
-    _fetchNewMedia();
+    _fetchNewMedia(context);
   }
 
   _handleScrollEvent(ScrollNotification scroll) {
     if (scroll.metrics.pixels / scroll.metrics.maxScrollExtent > 0.33) {
       if (currentPage != lastPage) {
-        _fetchNewMedia();
+        _fetchNewMedia(context);
       }
     }
   }
@@ -76,11 +80,12 @@ class _GridGalleryState extends State<GridGallery>
   //   }
   // }
 
-  _fetchNewMedia() async {
+  _fetchNewMedia(BuildContext context2) async {
     // var file = _files();
     lastPage = currentPage;
     var result = await PhotoManager.requestPermissionExtend();
     //var res = await Permission.manageExternalStorage.request();
+    final Controller controller = Get.put(Controller());
 
     if (result == PermissionState.authorized) {
       // success
@@ -104,8 +109,6 @@ class _GridGalleryState extends State<GridGallery>
               if (snapshot.connectionState == ConnectionState.done) {
                 return InkWell(
                   onTap: () {
-                    Navigator.of(context).pop();
-
                     asset.file.then((value) => {
                           Navigator.push(
                               context,
@@ -113,6 +116,7 @@ class _GridGalleryState extends State<GridGallery>
                                 builder: (_) =>
                                     UploadPage(filePath: value!.path),
                               ))
+
                           // if (asset.type == AssetType.video)
                           //   {
                           //     UploadPageCalls.createPost(
@@ -254,7 +258,6 @@ Future<void> gallerySheet(BuildContext context) {
                             }
                             final image = File(picked.path);
                             print(image);
-
                             /*  setState(() {
                                   pickedimage = image;
                                   gsecildi = true;

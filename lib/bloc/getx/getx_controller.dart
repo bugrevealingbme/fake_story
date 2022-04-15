@@ -17,6 +17,7 @@ class Controller extends GetxController {
   var postVideoList = [].obs;
   addPostVideoList(List<PostModel> post) =>
       {postVideoList.clear(), postVideoList.addAll(post)};
+  clearPostVideoList() => {postVideoList.clear()};
 
   var language = "".obs;
   changeLanguage(String newLanguage) => language.value = newLanguage;
@@ -62,5 +63,25 @@ class Controller extends GetxController {
     } else {
       isVideo.value = false;
     }
+  }
+
+  var pageSize = 0.obs;
+  setPageSize(int value) {
+    pageSize.value == value;
+  }
+
+  var postLike = false.obs;
+  likeTrueFalse(bool value) {
+    postLike.value = value;
+  }
+
+  var postSave = false.obs;
+  saveTrueFalse(bool value) {
+    postSave.value = value;
+  }
+
+  var postFollow = false.obs;
+  followTrueFalse(bool value) {
+    postFollow.value = value;
   }
 }

@@ -18,7 +18,8 @@ class ProfilCalss {
     Response response;
     dio.options.headers["Authorization"] = 'Bearer $token';
     response = await dio.get(BASEURL + "user/me/");
-    print('Response status: ${response.statusCode}');
+    logger.i('Response status: ${response.statusCode}');
+
     print('Response body: ${response.data}');
     var user = UserModel.fromJson(response.data);
     logger.i(user.username);

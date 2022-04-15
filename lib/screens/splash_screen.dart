@@ -1,3 +1,4 @@
+import 'package:fake_story/api/api_calls/profil_page_calls.dart';
 import 'package:fake_story/screens/auth_screen.dart';
 import 'package:fake_story/screens/home.dart';
 import 'package:flutter/material.dart';

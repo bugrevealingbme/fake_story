@@ -307,8 +307,10 @@ class _HomeVideosViewState extends State<HomeVideosView>
                       const Tab(
                         text: "Popular",
                       ),
-                      const Tab(text: "Following")
                     ];
+                    controller.isUserLogin.value
+                        ? categoryList.add(Tab(text: "Following"))
+                        : null;
                     if (snapshot.data != null) {
                       for (var item in snapshot.data) {
                         var tabs = Tab(text: item.title);
@@ -326,9 +328,10 @@ class _HomeVideosViewState extends State<HomeVideosView>
                         ),
                         child: TabBar(
                             onTap: (value) => {
-                                  setState(() {
-                                    pagesize = value;
-                                  }),
+                                  // setState(() {
+                                  //   pagesize = value;
+                                  // }),
+                                  controller.setPageSize(value),
                                   if (value == 0)
                                     {
                                       if (controller.isVideo.value)
@@ -346,29 +349,49 @@ class _HomeVideosViewState extends State<HomeVideosView>
                                                   .addPostVideoList(item!))
                                         }
                                     }
-                                  else if (value == 1)
+                                  else if (value == 1 &&
+                                      controller.isUserLogin.value)
                                     {
-                                      if (controller.isVideo.value)
+                                      if (controller.isUserLogin.value)
                                         {
-                                          HomeCall.getFollowUserPostList(true)
-                                              .then((value) => controller
-                                                  .addPostVideoList(value!))
+                                          if (controller.isVideo.value)
+                                            {
+                                              HomeCall.getFollowUserPostList(
+                                                      true)
+                                                  .then((value) => controller
+                                                      .addPostVideoList(value!))
+                                            }
+                                          else
+                                            {
+                                              HomeCall.getFollowUserPostList(
+                                                      false)
+                                                  .then((value) => controller
+                                                      .addPostVideoList(value!))
+                                            }
                                         }
                                       else
-                                        {
-                                          HomeCall.getFollowUserPostList(false)
-                                              .then((value) => controller
-                                                  .addPostVideoList(value!))
-                                        }
+                                        {controller.clearPostVideoList()}
                                     }
                                   else
                                     {
-                                      HomeCall.getCategory(
-                                              snapshot.data[value - 2].id
-                                                  .toString(),
-                                              true)
-                                          .then((item) => controller
-                                              .addPostVideoList(item!))
+                                      if (controller.isUserLogin.value)
+                                        {
+                                          HomeCall.getCategory(
+                                                  snapshot.data[value - 2].id
+                                                      .toString(),
+                                                  true)
+                                              .then((item) => controller
+                                                  .addPostVideoList(item!))
+                                        }
+                                      else
+                                        {
+                                          HomeCall.getCategory(
+                                                  snapshot.data[value - 1].id
+                                                      .toString(),
+                                                  true)
+                                              .then((item) => controller
+                                                  .addPostVideoList(item!))
+                                        }
                                     }
                                 },
                             labelPadding:
@@ -436,7 +459,8 @@ class _HomeVideosViewState extends State<HomeVideosView>
                   var logger = Logger();
                   logger.i(" data dolu video");
                   logger.i(controller.isUserLogin.value);
-                  if (pagesize == 1 && !controller.isUserLogin.value) {
+                  if (controller.pageSize.value == 1 &&
+                      !controller.isUserLogin.value) {
                     return forceLogin(context);
                   } else {
                     return Obx(() => GridView.builder(
@@ -465,7 +489,8 @@ class _HomeVideosViewState extends State<HomeVideosView>
                 } else {
                   var logger = Logger();
                   logger.i(" data bos video");
-                  if (pagesize == 1 && !controller.isUserLogin.value) {
+                  if (controller.pageSize.value == 1 &&
+                      !controller.isUserLogin.value) {
                     return forceLogin(context);
                   } else {
                     return Container();
@@ -493,6 +518,7 @@ class HomePhotosView extends StatefulWidget {
 
 class _HomePhotosViewState extends State<HomePhotosView>
     with AutomaticKeepAliveClientMixin {
+  int pagesize = 0;
   @override
   void initState() {
     super.initState();
@@ -506,29 +532,32 @@ class _HomePhotosViewState extends State<HomePhotosView>
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
         if (controller.postList.isNotEmpty) {
           var logger = Logger();
-          logger.i(" data dolu");
-
-          return Obx(() => GridView.builder(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: viewer ? 2 : 3,
-                  childAspectRatio: 0.571,
-                  crossAxisSpacing: Constants.gridSpacing,
-                  mainAxisSpacing: Constants.gridSpacing,
-                ),
-                shrinkWrap: true,
-                primary: false,
-                itemCount: controller.postList.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return GeneralWidgets.storyPhoto(
-                      context,
-                      size,
-                      controller.postList[index].link,
-                      controller.postList[index].createdAt,
-                      controller.postList[index],
-                      viewer,
-                      showCategory: false);
-                },
-              ));
+          logger.i("photooo data dolu");
+          if (controller.pageSize.value == 1 && !controller.isUserLogin.value) {
+            return forceLogin(context);
+          } else {
+            return Obx(() => GridView.builder(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: viewer ? 2 : 3,
+                    childAspectRatio: 0.571,
+                    crossAxisSpacing: Constants.gridSpacing,
+                    mainAxisSpacing: Constants.gridSpacing,
+                  ),
+                  shrinkWrap: true,
+                  primary: false,
+                  itemCount: controller.postList.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return GeneralWidgets.storyPhoto(
+                        context,
+                        size,
+                        controller.postList[index].link,
+                        controller.postList[index].createdAt,
+                        controller.postList[index],
+                        viewer,
+                        showCategory: false);
+                  },
+                ));
+          }
         } else {
           var logger = Logger();
           logger.i("empty data postlar");
@@ -601,8 +630,10 @@ class _HomePhotosViewState extends State<HomePhotosView>
                       const Tab(
                         text: "Popular",
                       ),
-                      const Tab(text: "Following")
                     ];
+                    controller.isUserLogin.value
+                        ? list.add(Tab(text: "Following"))
+                        : null;
                     if (snapshot.data != null) {
                       for (var item in snapshot.data) {
                         var tabList = Tab(text: item.title);
@@ -620,28 +651,49 @@ class _HomePhotosViewState extends State<HomePhotosView>
                         ),
                         child: TabBar(
                             onTap: (value) => {
+                                  controller.setPageSize(value),
                                   if (value == 0)
                                     {
+                                      // STATE
                                       print("index 0 veya 1"),
                                       HomeCall.getSearchPostList(
                                               "", false, "stream", false)
                                           .then((item) =>
                                               controller.addPostList(item!))
                                     }
-                                  else if (value == 1)
+                                  else if (value == 1 &&
+                                      controller.isUserLogin.value)
                                     {
-                                      HomeCall.getFollowUserPostList(false)
-                                          .then((value) =>
-                                              controller.addPostList(value!))
+                                      if (controller.isUserLogin.value)
+                                        {
+                                          print("enessssssssssssss"),
+                                          HomeCall.getFollowUserPostList(false)
+                                              .then((value) => controller
+                                                  .addPostList(value!))
+                                        }
+                                      else
+                                        {controller.clearPostVideoList()}
                                     }
                                   else
                                     {
-                                      HomeCall.getCategory(
-                                              snapshot.data[value - 2].id
-                                                  .toString(),
-                                              false)
-                                          .then((item) =>
-                                              controller.addPostList(item!))
+                                      if (controller.isUserLogin.value)
+                                        {
+                                          HomeCall.getCategory(
+                                                  snapshot.data[value - 2].id
+                                                      .toString(),
+                                                  false)
+                                              .then((item) =>
+                                                  controller.addPostList(item!))
+                                        }
+                                      else
+                                        {
+                                          HomeCall.getCategory(
+                                                  snapshot.data[value - 1].id
+                                                      .toString(),
+                                                  false)
+                                              .then((item) =>
+                                                  controller.addPostList(item!))
+                                        }
                                     }
                                 },
                             labelPadding:

@@ -2,7 +2,9 @@
 
 import 'package:fake_story/api/api_calls/profil_page_calls.dart';
 import 'package:fake_story/bloc/getx/getx_controller.dart';
+import 'package:fake_story/utils/shared_prefs_ext.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:settings_ui/settings_ui.dart';
 
@@ -51,6 +53,7 @@ class _SettingsPageState extends State<SettingsPage> {
                             _buildPopupDialog(context, true))),
                 value: Obx(() => Text(controller.language.value))),
             SettingsTile.navigation(
+                enabled: controller.isUserLogin.value,
                 leading: const Icon(Icons.language),
                 title: InkWell(
                     child: const Text('Post Language'),
@@ -59,34 +62,18 @@ class _SettingsPageState extends State<SettingsPage> {
                         builder: (BuildContext context) =>
                             _buildPopupDialog(context, false))),
                 value: Obx(() => Text(controller.postLanguage.value))),
-            SettingsTile.switchTile(
-              onToggle: (value) {},
-              initialValue: isToggle,
-              enabled: false,
-              leading: const Icon(Icons.format_paint),
-              title: const Text('Enable dark theme'),
-            ),
             SettingsTile.navigation(
               leading: const Icon(Icons.contact_page),
-              title: InkWell(
-                  child: const Text('Contact'),
-                  onTap: () => showDialog(
-                      context: context,
-                      builder: (BuildContext context) =>
-                          _buildPopupDialog(context, true))),
+              title: InkWell(child: const Text('Contact'), onTap: () => {}),
               value: const Text('Contact@gmail.com'),
             ),
             SettingsTile.navigation(
-              leading: const Icon(Icons.contact_page),
-              title: InkWell(
-                  child: const Text('Other Apps'),
-                  onTap: () => showDialog(
-                      context: context,
-                      builder: (BuildContext context) =>
-                          _buildPopupDialog(context, true))),
+              leading: const Icon(Icons.apps_outlined),
+              title: InkWell(child: const Text('Other Apps'), onTap: () => {}),
               value: const Text('Show our apps'),
             ),
             SettingsTile.navigation(
+              enabled: controller.isUserLogin.value,
               // ignore: prefer_const_constructors
               leading: Icon(
                 Icons.exit_to_app,
@@ -94,10 +81,15 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
               title: InkWell(
                   child: const Text('Exit'),
-                  onTap: () => showDialog(
-                      context: context,
-                      builder: (BuildContext context) =>
-                          _buildPopupDialog(context, true))),
+                  onTap: () => {
+                        CustomSharedPref.deleteStringDataToSharedPref(
+                                "accessToken")
+                            .then((value) => {
+                                  controller.setUserLoginState(),
+                                  EasyLoading.showSuccess(
+                                      "Successfuly Log Out!")
+                                })
+                      }),
             ),
           ],
         ),

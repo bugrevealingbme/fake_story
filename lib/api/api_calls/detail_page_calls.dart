@@ -6,6 +6,8 @@ import 'package:fake_story/data/model/postmodel.dart';
 import 'package:fake_story/data/model/user_model.dart';
 import 'package:logger/logger.dart';
 
+import '../../utils/shared_prefs_ext.dart';
+
 class DetailPageCalls {
   static String BASEURL = "http://185.174.61.27:8888/";
 
@@ -173,8 +175,7 @@ class DetailPageCalls {
 
   static Future<UserModel> followUnfollow(int followuserid) async {
     // shared pref ten token cekilecek burada
-    var token =
-        "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjo1MjQ5NDYwOTY1LCJpYXQiOjE2NDk0NjA5NjUsImp0aSI6ImNkYTllZTA3ZDQxYjRiNzc4YzI3YzY1N2Q3MjY0YzcwIiwidXNlcl9pZCI6OH0.NJnUXmslXZ3PklaK7GZg7h0GrGP8RpImhvFSXrFN_jo";
+    var token = await CustomSharedPref.readStringDataToLanguage("accessToken");
     var dio = Dio();
     Response response;
     dio.options.headers["Authorization"] = 'Bearer $token';
@@ -202,8 +203,7 @@ class DetailPageCalls {
 
   static Future<PostModel> likeUnlike(int postid) async {
     // shared pref ten token cekilecek burada
-    var token =
-        "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjo1MjQ5NDYwOTY1LCJpYXQiOjE2NDk0NjA5NjUsImp0aSI6ImNkYTllZTA3ZDQxYjRiNzc4YzI3YzY1N2Q3MjY0YzcwIiwidXNlcl9pZCI6OH0.NJnUXmslXZ3PklaK7GZg7h0GrGP8RpImhvFSXrFN_jo";
+    var token = await CustomSharedPref.readStringDataToLanguage("accessToken");
     var dio = Dio();
     Response response;
     dio.options.headers["Authorization"] = 'Bearer $token';
@@ -216,8 +216,7 @@ class DetailPageCalls {
 
   static Future<PostModel> favoriUnfavori(int postid) async {
     // shared pref ten token cekilecek burada
-    var token =
-        "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjo1MjQ5NDYwOTY1LCJpYXQiOjE2NDk0NjA5NjUsImp0aSI6ImNkYTllZTA3ZDQxYjRiNzc4YzI3YzY1N2Q3MjY0YzcwIiwidXNlcl9pZCI6OH0.NJnUXmslXZ3PklaK7GZg7h0GrGP8RpImhvFSXrFN_jo";
+    var token = await CustomSharedPref.readStringDataToLanguage("accessToken");
     var dio = Dio();
     Response response;
     dio.options.headers["Authorization"] = 'Bearer $token';

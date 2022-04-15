@@ -6,6 +6,7 @@ import 'package:fake_story/bloc/cubit/user_cubit.dart';
 import 'package:fake_story/bloc/states/user_states.dart';
 import 'package:fake_story/data/model/postmodel.dart';
 import 'package:fake_story/screens/details_page.dart';
+import 'package:fake_story/screens/profile.dart';
 import 'package:fake_story/utils/app_constans.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -125,10 +126,19 @@ class GeneralWidgets {
                                       {
                                         EasyLoading.dismiss(),
                                         controller.setUserStateLoaded(),
-                                        controller.setUserLoginState()
+                                        controller.setUserLoginState(),
+                                        EasyLoading.showSuccess("Success"),
+                                        Navigator.pop(context),
+                                        Navigator.pop(context),
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (_) => ProfilePage(),
+                                            ))
                                       }
                                     else
                                       {
+                                        EasyLoading.dismiss(),
                                         EasyLoading.showError(
                                             "Error while loading!"),
                                         controller.setUserStateError(),
@@ -325,7 +335,7 @@ class GeneralWidgets {
       TextEditingController userNameController) {
     return Column(
       children: <Widget>[
-        _entryField("Email adress", controller),
+        _entryField(what != "register" ? "Username" : "Email", controller),
         if (what == "register")
           _entryFieldRegisterUsername("Username", userNameController),
         _entryFieldPassword("Password", passController, isPassword: true),

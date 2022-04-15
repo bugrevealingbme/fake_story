@@ -16,6 +16,11 @@ class CustomSharedPref {
     return action;
   }
 
+  static Future<void> deleteStringDataToSharedPref(String key) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(key);
+  }
+
   static Future<String?> readStringDataToLanguage(String key) async {
     final prefs = await SharedPreferences.getInstance();
     final String? action = prefs.getString(key);
@@ -24,8 +29,10 @@ class CustomSharedPref {
   }
 
   static Future<bool> isUserLogin() async {
+    print("hkgf");
     var isLogin =
         await CustomSharedPref.readStringDataToSharedPref("accessToken");
+    print("kjlhjg");
     if (isLogin == null) {
       return false;
     } else {

@@ -157,7 +157,7 @@ class ProfilePostWidgets {
                                                 borderRadius:
                                                     BorderRadius.circular(50)),
                                             child: const Text(
-                                              "enes",
+                                              "",
                                               style: TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   color: Colors.white),
