@@ -41,8 +41,8 @@ class _GridGalleryState extends State<GridGallery>
 
   _fetchNewMedia() async {
     lastPage = currentPage;
-    var result = await PhotoManager.requestPermission();
-    if (result) {
+    var result = await PhotoManager.requestPermissionExtend();
+    if (result == PermissionState.authorized) {
       // success
 
       //load the album list
@@ -51,14 +51,15 @@ class _GridGalleryState extends State<GridGallery>
         type: RequestType.common,
       );
       List<AssetEntity> media = await albums[0].getAssetListPaged(
-        currentPage,
-        60,
+        page: currentPage,
+        size: 60,
       ); //preloading files
       List<Widget> temp = [];
       for (var asset in media) {
         temp.add(
           FutureBuilder(
-            future: asset.thumbDataWithSize(200, 200), //resolution of thumbnail
+            future: asset.thumbnailDataWithSize(
+                ThumbnailSize(200, 200)), //resolution of thumbnail
             builder:
                 (BuildContext context, AsyncSnapshot<Uint8List?> snapshot) {
               if (snapshot.connectionState == ConnectionState.done) {
