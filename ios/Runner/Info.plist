@@ -48,5 +48,7 @@
 	<key>kTCCServiceMediaLibrary</key>
     <string>App need your agree, can visit your media</string>
 	
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
 </dict>
 </plist>
